@@ -14,31 +14,7 @@ const generarJWT = (uid) => {
         };
 
         jwt.sign(payload, process.env.SECRET_SEED_JWT, {
-            expiresIn: '4h'
-        }, (err, token) => {
-
-            if (err) {
-                console.log(err);
-                reject('No se pudo generar el token');
-            } else {
-                resolve(token);
-            }
-
-        });
-    });
-
-};
-
-const generarClientJWT = (cid) => {
-
-    return new Promise((resolve, reject) => {
-
-        const payload = {
-            cid
-        };
-
-        jwt.sign(payload, process.env.SECRET_SEED_JWT, {
-            expiresIn: '72h'
+            expiresIn: '12h'
         }, (err, token) => {
 
             if (err) {
@@ -54,6 +30,5 @@ const generarClientJWT = (cid) => {
 };
 
 module.exports = {
-    generarJWT,
-    generarClientJWT
+    generarJWT
 };

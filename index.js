@@ -29,8 +29,9 @@ app.use(express.static('public'));
 
 // RUTAS
 app.use('/api/clients', require('./routes/clients.route'));
-app.use('/api/users', require('./routes/users.route'));
+app.use('/api/login', require('./routes/auth.route'));
 app.use('/api/products', require('./routes/products.route'));
+app.use('/api/users', require('./routes/users.route'));
 
 // SPA
 app.get('*', (req, res) => {
