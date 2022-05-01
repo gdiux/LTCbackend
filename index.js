@@ -29,6 +29,7 @@ app.use(express.static('public'));
 
 // RUTAS
 app.use('/api/clients', require('./routes/clients.route'));
+app.use('/api/correctives', require('./routes/correctives.route'));
 app.use('/api/login', require('./routes/auth.route'));
 app.use('/api/products', require('./routes/products.route'));
 app.use('/api/preventives', require('./routes/preventives.route'));

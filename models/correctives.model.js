@@ -28,7 +28,7 @@ const VideoSchema = Schema({
 
 });
 
-const PreventivesSchema = Schema({
+const CorrectivesSchema = Schema({
 
     control: {
         type: Number,
@@ -52,6 +52,10 @@ const PreventivesSchema = Schema({
     client: {
         type: Schema.Types.ObjectId,
         ref: 'Clients'
+    },
+
+    description: {
+        type: String
     },
 
     note: {
@@ -82,18 +86,18 @@ const PreventivesSchema = Schema({
 
 });
 
-PreventivesSchema.method('toJSON', function() {
+CorrectivesSchema.method('toJSON', function() {
 
     const { __v, _id, ...object } = this.toObject();
-    object.preid = _id;
+    object.coid = _id;
     return object;
 
 });
 
-PreventivesSchema.plugin(autoIncrement.plugin, {
-    model: 'Preventives',
+CorrectivesSchema.plugin(autoIncrement.plugin, {
+    model: 'Correctives',
     field: 'control',
     startAt: process.env.AUTOINCREMENT_INIT
 });
 
-module.exports = model('Preventives', PreventivesSchema);
+module.exports = model('Correctives', CorrectivesSchema);

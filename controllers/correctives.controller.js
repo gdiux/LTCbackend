@@ -1,28 +1,28 @@
 const { response } = require('express');
 
-const Preventive = require('../models/preventives.model');
+const Corrective = require('../models/correctives.model');
 
 /** =====================================================================
- *  GET PREVENTIVES
+ *  GET CORRECTIVES
 =========================================================================*/
-const getPreventives = async(req, res = response) => {
+const getCorrectives = async(req, res = response) => {
 
     try {
 
         const desde = Number(req.query.desde) || 0;
 
-        const [preventives, total] = await Promise.all([
+        const [correctives, total] = await Promise.all([
 
-            Preventive.find()
+            Corrective.find()
             .skip(desde)
             .limit(10),
 
-            Preventive.countDocuments()
+            Corrective.countDocuments()
         ]);
 
         res.json({
             ok: true,
-            preventives,
+            correctives,
             total
         });
 
@@ -37,22 +37,22 @@ const getPreventives = async(req, res = response) => {
 
 };
 /** =====================================================================
- *  GET PREVENTIVES
+ *  GET CORRECTIVES
 =========================================================================*/
 /** =====================================================================
- *  CREATE PREVENTIVE
+ *  CREATE CORRECTIVE
 =========================================================================*/
-const createPreventive = async(req, res = response) => {
+const createCorrectives = async(req, res = response) => {
 
     try {
 
-        // SAVE PREVENTIVE
-        const preventive = new Preventive(req.body);
-        await preventive.save();
+        // SAVE CORRECTIVE
+        const corrective = new Corrective(req.body);
+        await corrective.save();
 
         res.json({
             ok: true,
-            preventive
+            corrective
         });
 
     } catch (error) {
@@ -65,21 +65,21 @@ const createPreventive = async(req, res = response) => {
 
 };
 /** =====================================================================
- *  CREATE PREVENTIVE
+ *  CREATE CORRECTIVE
 =========================================================================*/
 
 /** =====================================================================
- *  UPDATE PREVENTIVES
+ *  UPDATE CORRECTIVES
 =========================================================================*/
-const updatePreventives = async(req, res = response) => {
+const updateCorrectives = async(req, res = response) => {
 
-    const preid = req.params.id;
+    const coid = req.params.id;
 
     try {
 
         // SEARCH CLIENT
-        const preventiveDB = await Preventive.findById({ _id: preid });
-        if (!preventiveDB) {
+        const corretiveDB = await Corrective.findById({ _id: coid });
+        if (!corretiveDB) {
             return res.status(400).json({
                 ok: false,
                 msg: 'No existe ningun usuario con este ID'
@@ -91,11 +91,11 @@ const updatePreventives = async(req, res = response) => {
         const {...campos } = req.body;
 
         // UPDATE
-        const preventiveUpdate = await Preventive.findByIdAndUpdate(preid, campos, { new: true, useFindAndModify: false });
+        const correctiveUpdate = await Corrective.findByIdAndUpdate(coid, campos, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            preventive: preventiveUpdate
+            corrective: correctiveUpdate
         });
 
 
@@ -110,41 +110,41 @@ const updatePreventives = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  UPDATE PREVENTIVES
+ *  UPDATE CORRECTIVES
 =========================================================================*/
 
 /** =====================================================================
- *  DELETE PREVENTIVES
+ *  DELETE CORRECTIVES
 =========================================================================*/
-const deletePreventives = async(req, res = response) => {
+const deleteCorrectives = async(req, res = response) => {
 
-    const preid = req.params.id;
+    const coid = req.params.id;
 
     try {
 
-        // SEARCH PREVENTIVE
-        const preventiveDB = await Preventive.findById({ _id: preid });
-        if (!preventiveDB) {
+        // SEARCH CORRECTIVE
+        const corretiveDB = await Corrective.findById({ _id: coid });
+        if (!corretiveDB) {
             return res.status(400).json({
                 ok: false,
                 msg: 'No existe ningun usuario con este ID'
             });
         }
-        // SEARCH PREVENTIVE
+        // SEARCH CORRECTIVE
 
         // CHANGE STATUS
-        if (preventiveDB.status === true) {
-            preventiveDB.status = false;
+        if (corretiveDB.status === true) {
+            corretiveDB.status = false;
         } else {
-            preventiveDB.status = true;
+            corretiveDB.status = true;
         }
         // CHANGE STATUS
 
-        const PreventiveUpdate = await Preventive.findByIdAndUpdate(preid, preventiveDB, { new: true, useFindAndModify: false });
+        const correctiveUpdate = await Corrective.findByIdAndUpdate(coid, corretiveDB, { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
-            client: PreventiveUpdate
+            client: correctiveUpdate
         });
 
     } catch (error) {
@@ -158,13 +158,13 @@ const deletePreventives = async(req, res = response) => {
 };
 
 /** =====================================================================
- *  DELETE PREVENTIVES
+ *  DELETE CORRECTIVES
 =========================================================================*/
 
 // EXPORTS
 module.exports = {
-    getPreventives,
-    createPreventive,
-    updatePreventives,
-    deletePreventives
+    getCorrectives,
+    createCorrectives,
+    updateCorrectives,
+    deleteCorrectives
 };
