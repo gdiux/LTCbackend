@@ -7,28 +7,43 @@ const ProductSchema = Schema({
         require: true,
         unique: true
     },
+
     serial: {
         type: String,
         require: true,
         unique: true
     },
-    marca: {
+
+    brand: {
         type: String
     },
-    modelo: {
+
+    model: {
         type: String
     },
-    año: {
+
+    year: {
         type: Number
     },
+
     status: {
         type: Boolean,
         default: true
     },
+
     estado: {
         type: String
     },
-    fecha: {
+
+    client: {
+        type: Schema.Types.ObjectId
+    },
+
+    next: {
+        type: Date
+    },
+
+    date: {
         type: Date,
         default: Date.now
     }

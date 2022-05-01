@@ -1,0 +1,99 @@
+const { Schema, model } = require('mongoose');
+
+const autoIncrement = require('mongoose-auto-increment');
+
+autoIncrement.initialize(connection);
+
+const ItemsSchema = Schema({
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    },
+    qty: {
+        type: Number
+    }
+});
+
+const ImgSchema = Schema({
+    img: {
+        type: String
+    }
+
+});
+
+const VideoSchema = Schema({
+    video: {
+        type: String
+    }
+
+});
+
+const PreventivesSchema = Schema({
+
+    control: {
+        type: Number,
+    },
+
+    create: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    product: {
+        type: Schema.Types.ObjectId,
+        ref: 'Product'
+    },
+
+    staff: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    },
+
+    client: {
+        type: Schema.Types.ObjectId,
+        ref: 'Clients'
+    },
+
+    note: {
+        type: String
+    },
+
+    items: [ItemsSchema],
+
+    imgBef: [ImgSchema],
+
+    imgAft: [ImgSchema],
+
+    video: [VideoSchema],
+
+    status: {
+        type: Boolean,
+        default: true
+    },
+
+    estado: {
+        type: String
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+});
+
+PreventivesSchema.method('toJSON', function() {
+
+    const { __v, _id, ...object } = this.toObject();
+    object.preid = _id;
+    return object;
+
+});
+
+PreventivesSchema.plugin(autoIncrement.plugin, {
+    model: 'Preventives',
+    field: 'control',
+    startAt: process.env.AUTOINCREMENT_INIT
+});
+
+module.exports = model('Preventives', PreventivesSchema);
