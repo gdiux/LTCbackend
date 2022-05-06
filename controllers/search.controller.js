@@ -64,7 +64,8 @@ const search = async(req, res = response) => {
                         { code: regex },
                         { serial: regex },
                         { brand: regex },
-                        { model: regex }
+                        { model: regex },
+                        { estado: regex }
                     ]
                 })
                 .populate('Client', 'name phone'),
