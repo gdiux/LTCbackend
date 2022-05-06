@@ -50,13 +50,13 @@ const createClient = async(req, res = response) => {
     try {
 
         // VALIDATE CEDULA
-        // const validarCedula = await Client.findOne({ cedula });
-        // if (validarCedula) {
-        //     return res.status(400).json({
-        //         ok: false,
-        //         msg: 'Ya existe un usuario con este numero de cedula de ciudadania'
-        //     });
-        // }
+        const validarCedula = await Client.findOne({ cedula });
+        if (validarCedula) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'Ya existe un usuario con este numero de cedula de ciudadania'
+            });
+        }
 
         // SAVE CLIENT
         const client = new Client(req.body);
