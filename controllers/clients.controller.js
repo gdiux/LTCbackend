@@ -10,12 +10,13 @@ const getClients = async(req, res = response) => {
     try {
 
         const desde = Number(req.query.desde) || 0;
+        const limit = Number(req.query.limite) || 10;
 
         const [clients, total] = await Promise.all([
 
             Client.find()
             .skip(desde)
-            .limit(10),
+            .limit(limit),
 
             Client.countDocuments()
         ]);
@@ -49,13 +50,13 @@ const createClient = async(req, res = response) => {
     try {
 
         // VALIDATE CEDULA
-        const validarCedula = await Client.findOne({ cedula });
-        if (validarCedula) {
-            return res.status(400).json({
-                ok: false,
-                msg: 'Ya existe un usuario con este numero de cedula de ciudadania'
-            });
-        }
+        // const validarCedula = await Client.findOne({ cedula });
+        // if (validarCedula) {
+        //     return res.status(400).json({
+        //         ok: false,
+        //         msg: 'Ya existe un usuario con este numero de cedula de ciudadania'
+        //     });
+        // }
 
         // SAVE CLIENT
         const client = new Client(req.body);

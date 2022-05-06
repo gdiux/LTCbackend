@@ -79,7 +79,7 @@ const renewJWT = async(req, res = response) => {
     const token = await generarJWT(uid);
 
     // SEARCH USER
-    const usuario = await User.findById(uid, 'usuario name role img uid status cerrada turno privilegios');
+    const usuario = await User.findById(uid, 'usuario name role img address uid valid fecha status');
     // SEARCH USER
 
     res.status(200).json({

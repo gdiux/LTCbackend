@@ -27,7 +27,7 @@ router.get('/', validarJWT, getClients);
 router.post('/', [
         validarJWT,
         check('name', 'El nombre es olbigatorio').not().isEmpty(),
-        check('cedula', 'La Cedula es olbigatoria').not().isEmpty(),
+        check('phone', 'El telefono es obligatorio').not().isEmpty(),
         validarCampos
     ],
     createClient

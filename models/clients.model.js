@@ -24,35 +24,9 @@ const ClientSchema = Schema({
     department: {
         type: String
     },
-    zip: {
-        type: String
-    },
     status: {
         type: Boolean,
         default: true
-    },
-    google: {
-        type: Boolean,
-        default: true
-    },
-    credit: {
-        type: Boolean,
-        default: false
-    },
-    mayoreo: {
-        type: Boolean,
-        default: false
-    },
-    contratista: {
-        type: Boolean,
-        default: false
-    },
-    valid: {
-        type: Boolean,
-        default: false
-    },
-    img: {
-        type: String
     },
     fecha: {
         type: Date,

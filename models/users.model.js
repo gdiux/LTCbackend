@@ -1,14 +1,5 @@
 const { Schema, model } = require('mongoose');
 
-const privSchema = Schema({
-
-    cierre: {
-        type: Boolean,
-        default: true
-    }
-
-});
-
 const UserSchema = Schema({
 
     usuario: {
@@ -26,9 +17,6 @@ const UserSchema = Schema({
         type: String,
         require: true
     },
-
-    privilegios: [privSchema],
-
     role: {
         type: String,
         default: 'STAFF',
@@ -43,24 +31,9 @@ const UserSchema = Schema({
         type: String
     },
 
-    mesero: {
-        type: Boolean,
-        default: false
-    },
-
-    cerrada: {
-        type: Boolean,
-        default: true
-    },
-
-    turno: {
-        type: Schema.Types.ObjectId,
-        ref: 'Turno'
-    },
-
     valid: {
         type: Boolean,
-        default: false
+        default: true
     },
 
     status: {
