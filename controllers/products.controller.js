@@ -10,7 +10,7 @@ const getProducts = async(req, res = response) => {
     try {
 
         const tipo = req.query.tipo || 'none';
-        const department = req.query.departamento || 'none';
+        const brand = req.query.brand || 'none';
         const valor = req.query.valor || 'false';
         const initial = req.query.initial || '01/01/2001';
         const end = req.query.end || new Date();
@@ -18,118 +18,61 @@ const getProducts = async(req, res = response) => {
         const limite = Number(req.query.limite) || 10;
         const status = req.query.status || false;
 
-        let products;
-        switch (tipo) {
-            case 'agotados':
+        const products = await Product.find()
+            .populate('Clients', 'name phone')
+            .skip(desde)
+            .limit(limite);
 
-                if (department !== 'none') {
+        // let products;
+        // switch (tipo) {
+        //     case 'brand':
 
-                    products = await Product.find({ department: department, out: valor })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .sort({ out: -1 })
-                        .skip(desde)
-                        .limit(1000);
+        //         if (brand !== 'none') {
 
-                } else {
+        //             products = await Product.find({ brand: brand })
+        //                 .populate('Clients', 'name')
+        //                 .sort({ out: -1 })
+        //                 .skip(desde)
+        //                 .limit(1000);
 
-                    products = await Product.find({ out: valor })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .sort({ out: -1 })
-                        .skip(desde)
-                        .limit(1000);
-                }
+        //         } else {
+
+        //             products = await Product.find()
+        //                 .populate('Clients', 'name')
+        //                 .sort({ out: -1 })
+        //                 .skip(desde)
+        //                 .limit(1000);
+        //         }
 
 
-                break;
-            case 'vencidos':
+        //         break;
+        //     case 'none':
 
-                if (department !== 'none') {
+        //         if (brand !== 'none') {
 
-                    products = await Product.find({
-                            department: department,
-                            $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }]
-                        })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .skip(desde)
-                        .limit(limite);
+        //             products = await Product.find({ brand: brand })
+        //                 .populate('Clients', 'name')
+        //                 .skip(desde)
+        //                 .limit(1000);
 
-                } else {
+        //         } else {
 
-                    products = await Product.find({
-                            $and: [{ expiration: { $gte: new Date(initial), $lt: new Date(end) } }],
-                        })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .skip(desde)
-                        .limit(limite);
-                }
+        //             products = await Product.find()
+        //                 .populate('Clients', 'name')
+        //                 .skip(desde)
+        //                 .limit(limite);
 
-                // products = expirateProduct(productos);
-                for (let i = 0; i < products.length; i++) {
+        //         }
 
-                    if (!products[i].vencido) {
+        //         break;
 
-                        products[i].vencido = true;
-
-                        // ACTUALIZAMOS
-                        const productUpdate = await Product.findByIdAndUpdate(products[i]._id, products[i], { new: true, useFindAndModify: false });
-
-                    }
-                }
-
-                break;
-            case 'top':
-
-                if (department !== 'none') {
-
-                    products = await Product.find({ department: department, out: valor })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .sort({ sold: -1 })
-                        .skip(desde)
-                        .limit(limite);
-
-                } else {
-
-                    products = await Product.find()
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .sort({ sold: -1 })
-                        .skip(desde)
-                        .limit(limite);
-                }
-
-                break;
-            case 'none':
-
-                if (department !== 'none') {
-
-                    products = await Product.find({ department: department })
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .skip(desde)
-                        .limit(1000);
-
-                } else {
-
-                    products = await Product.find()
-                        .populate('kit.product', 'name')
-                        .populate('department', 'name')
-                        .skip(desde)
-                        .limit(limite);
-
-                }
-
-                break;
-
-            default:
-                break;
-        }
+        //     default:
+        //         break;
+        // }
 
         const total = await Product.countDocuments();
+
+        console.log(products);
 
         res.json({
             ok: true,
@@ -160,7 +103,7 @@ const oneProduct = async(req, res = response) => {
 
         const product = await Product.findById(id)
             .populate('kit.product', 'name')
-            .populate('department', 'name');
+            .populate('brand', 'name');
 
         res.json({
             ok: true,
@@ -196,7 +139,7 @@ const codeProduct = async(req, res = response) => {
                 status: true
             })
             .populate('kit.product', 'name')
-            .populate('department', 'name');
+            .populate('brand', 'name');
 
         res.json({
             ok: true,
@@ -222,7 +165,7 @@ const productsExcel = async(req, res = response) => {
 
     try {
 
-        const products = await Product.find({}, 'code name type cost inventario gain price wholesale department stock bought sold returned damaged fecha');
+        const products = await Product.find({}, 'code name type cost inventario gain price wholesale brand stock bought sold returned damaged fecha');
 
         res.json({
             ok: true,
@@ -260,7 +203,6 @@ const createProduct = async(req, res = response) => {
 
         // SAVE PRODUCT
         const product = new Product(req.body);
-        product.inventario = product.stock;
 
         await product.save();
 
@@ -328,19 +270,6 @@ const updateProduct = async(req, res = response) => {
                 });
             }
         }
-
-        // COMPROBAR SI CAMBIO LA FECHA DE VENCIMIENTO
-        if (campos.expiration) {
-            if (Date.parse(campos.expiration) > Date.parse(productDB.expiration)) {
-                campos.vencido = false;
-            }
-        }
-
-        if (productDB.type === 'Paquete') {
-            campos.out = false;
-            campos.low = false;
-        }
-        // COMPROBAR SI EL PRODUCTO SE AGOTA
 
         // UPDATE
         campos.code = code;

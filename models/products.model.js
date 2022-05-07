@@ -36,7 +36,8 @@ const ProductSchema = Schema({
     },
 
     client: {
-        type: Schema.Types.ObjectId
+        type: Schema.Types.ObjectId,
+        ref: 'Clients'
     },
 
     next: {

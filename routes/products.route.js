@@ -75,8 +75,6 @@ router.put('/:id', [
         validarJWT,
         check('code', 'El codigo es obligatorio').not().isEmpty(),
         check('serial', 'El nombre es obligatorio').not().isEmpty(),
-        check('marca', 'El tipo es obligatorio').not().isEmpty(),
-        check('modelo', 'El tipo es obligatorio').not().isEmpty(),
         validarCampos
     ],
     updateProduct

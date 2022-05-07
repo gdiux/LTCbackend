@@ -42,7 +42,6 @@ router.post('/', [
 router.put('/:id', [
         validarJWT,
         check('name', 'El nombre es olbigatorio').not().isEmpty(),
-        check('cedula', 'La Cedula es olbigatoria').not().isEmpty(),
         validarCampos
     ],
     updateClient
