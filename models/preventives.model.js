@@ -31,7 +31,7 @@ const VideoSchema = Schema({
 const PreventivesSchema = Schema({
 
     control: {
-        type: Number,
+        type: String,
     },
 
     create: {
@@ -72,7 +72,16 @@ const PreventivesSchema = Schema({
     },
 
     estado: {
-        type: String
+        type: String,
+        default: 'Pendiente'
+    },
+
+    datein: {
+        type: Date
+    },
+
+    dateout: {
+        type: Date
     },
 
     date: {

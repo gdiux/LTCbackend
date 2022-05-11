@@ -27,7 +27,8 @@ router.get('/', validarJWT, getPreventives);
 =========================================================================*/
 router.post('/', [
         validarJWT,
-        check('note', 'El nombre es olbigatorio').not().isEmpty(),
+        check('staff', 'El tecnico es olbigatorio').isMongoId(),
+        check('client', 'El cliente es olbigatorio').isMongoId(),
         validarCampos
     ],
     createPreventive

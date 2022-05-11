@@ -32,16 +32,23 @@ const ProductSchema = Schema({
     },
 
     estado: {
-        type: String
+        type: String,
+        default: 'Disponible'
     },
-
+    cliente: {
+        type: Boolean,
+        default: false
+    },
     client: {
         type: Schema.Types.ObjectId,
-        ref: 'Clients'
+        ref: 'Clients',
     },
 
     next: {
         type: Date
+    },
+    img: {
+        type: String
     },
 
     date: {

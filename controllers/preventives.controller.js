@@ -10,13 +10,17 @@ const getPreventives = async(req, res = response) => {
     try {
 
         const desde = Number(req.query.desde) || 0;
+        const limite = Number(req.query.limite) || 10;
 
         const [preventives, total] = await Promise.all([
 
             Preventive.find()
+            .populate('create', 'name')
+            .populate('staff', 'name')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img')
             .skip(desde)
-            .limit(10),
-
+            .limit(limite),
             Preventive.countDocuments()
         ]);
 
@@ -46,8 +50,12 @@ const createPreventive = async(req, res = response) => {
 
     try {
 
+        const uid = req.uid;
+
         // SAVE PREVENTIVE
         const preventive = new Preventive(req.body);
+        preventive.create = uid;
+
         await preventive.save();
 
         res.json({

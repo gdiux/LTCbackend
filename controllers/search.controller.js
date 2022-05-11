@@ -3,6 +3,7 @@ const { response } = require('express');
 const User = require('../models/users.model');
 const Client = require('../models/clients.model');
 const Product = require('../models/products.model');
+const Preventive = require('../models/preventives.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -68,8 +69,26 @@ const search = async(req, res = response) => {
                         { estado: regex }
                     ]
                 })
-                .populate('Client', 'name phone'),
+                .populate('client', 'name phone cid'),
                 Product.countDocuments()
+            ]);
+            break;
+
+        case 'preventives':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Preventive.find({
+                    $or: [
+                        { control: regex },
+                        { estado: regex }
+                    ]
+                })
+                .populate('client', 'name cedula phone email address city')
+                .populate('create', 'name')
+                .populate('staff', 'name')
+                .populate('product', 'code serial brand model year status estado next img'),
+                Preventive.countDocuments()
             ]);
             break;
 

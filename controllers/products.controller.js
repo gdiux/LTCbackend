@@ -19,7 +19,7 @@ const getProducts = async(req, res = response) => {
         const status = req.query.status || false;
 
         const products = await Product.find()
-            .populate('Clients', 'name phone')
+            .populate('client', 'name cid')
             .skip(desde)
             .limit(limite);
 
@@ -72,8 +72,6 @@ const getProducts = async(req, res = response) => {
 
         const total = await Product.countDocuments();
 
-        console.log(products);
-
         res.json({
             ok: true,
             products,
@@ -123,39 +121,6 @@ const oneProduct = async(req, res = response) => {
 
 };
 
-/** =====================================================================
- *  GET PRODUCTS BY CODE
-=========================================================================*/
-const codeProduct = async(req, res = response) => {
-
-    try {
-
-        const code = new RegExp(req.params.code, 'i');
-
-        const product = await Product.findOne({
-                $or: [
-                    { code: code }
-                ],
-                status: true
-            })
-            .populate('kit.product', 'name')
-            .populate('brand', 'name');
-
-        res.json({
-            ok: true,
-            product
-        });
-
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            ok: false,
-            msg: 'Error inesperado, porfavor intente nuevamente'
-        });
-    }
-
-};
 
 
 /** =====================================================================
@@ -294,6 +259,46 @@ const updateProduct = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE PRODUCT
 =========================================================================*/
+/** =====================================================================
+ *  UPDATE CLIENT PRODUCT 
+=========================================================================*/
+const updateClientProduct = async(req, res = response) => {
+
+    try {
+
+        const pid = req.params.product;
+        const {...campos } = req.body;
+
+        // SEARCH PRODUCT
+        const productDB = await Product.findById({ _id: pid })
+        if (!productDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun producto con este ID'
+            });
+        }
+
+        const productUpdate = await Product.findByIdAndUpdate(pid, campos, { new: true, useFindAndModify: false })
+            .populate('client', 'name cid');
+
+        res.json({
+            ok: true,
+            product: productUpdate
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  UPDATE CLIENT PRODUCT
+=========================================================================*/
 
 /** =====================================================================
  *  DELETE PRODUCT
@@ -350,6 +355,6 @@ module.exports = {
     updateProduct,
     deleteProduct,
     oneProduct,
-    codeProduct,
+    updateClientProduct,
     productsExcel
 };
