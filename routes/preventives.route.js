@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPreventives, createPreventive, updatePreventives, deletePreventives } = require('../controllers/preventives.controller');
+const { getPreventives, createPreventive, updatePreventives, deletePreventives, getPreventiveId, postNotes } = require('../controllers/preventives.controller');
 
 
 const router = Router();
@@ -20,6 +20,14 @@ const router = Router();
 router.get('/', validarJWT, getPreventives);
 /** =====================================================================
  *  GET PREVENTIVES
+=========================================================================*/
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR ID
+=========================================================================*/
+router.get('/:id', validarJWT, getPreventiveId);
+/** =====================================================================
+ *  GET PREVENTIVE FOR ID
 =========================================================================*/
 
 /** =====================================================================
@@ -36,6 +44,21 @@ router.post('/', [
 /** =====================================================================
  *  CREATE PREVENTIVE
 =========================================================================*/
+
+/** =====================================================================
+ *  POST NOTES IN PREVENTIVE
+=========================================================================*/
+router.post('/notes/:id', [
+        validarJWT,
+        check('note', 'El comentario es olbigatorio').not().isEmpty(),
+        validarCampos
+    ],
+    postNotes
+);
+/** =====================================================================
+ *  POST NOTES IN PREVENTIVE
+=========================================================================*/
+
 
 /** =====================================================================
  *  UPDATE PREVENTIVES

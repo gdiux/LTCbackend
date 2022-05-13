@@ -2,6 +2,9 @@
 const path = require('path');
 const fs = require('fs');
 
+const webp = require('webp-converter');
+webp.grant_permission();
+
 const { response } = require('express');
 const { v4: uuidv4 } = require('uuid');
 
@@ -15,8 +18,9 @@ const fileUpload = async(req, res = response) => {
 
     const tipo = req.params.tipo;
     const id = req.params.id;
+    const desc = req.query.desc;
 
-    const validType = ['products', 'logo', 'user'];
+    const validType = ['products', 'logo', 'user', 'preventives'];
 
     // VALID TYPES
     if (!validType.includes(tipo)) {
@@ -50,10 +54,10 @@ const fileUpload = async(req, res = response) => {
     // VALID EXT
 
     // GENERATE NAME
-    const nameFile = `${ uuidv4() }.${extFile}`;
+    const nameFile = `${ uuidv4() }`;
 
     // PATH IMAGE
-    const path = `./uploads/${ tipo }/${ nameFile }`;
+    const path = `./uploads/${ tipo }/${ nameFile }.${extFile}`;
 
     // method to place the file somewhere on your server
     file.mv(path, (err) => {
@@ -64,15 +68,38 @@ const fileUpload = async(req, res = response) => {
             });
         }
 
-        // UPDATE IMAGE
-        updateImage(tipo, id, nameFile);
+        const result = webp.cwebp(path, `./uploads/${ tipo }/${nameFile}.webp`, "-q 80", logging = "-v");
+        result.then((response) => {
 
-        res.json({
-            ok: true,
-            msg: 'Imagen Actualizada',
-            nombreArchivo: nameFile
+            if (response) {
+
+                if (fs.existsSync(path)) {
+                    // DELET IMAGE OLD
+                    fs.unlinkSync(path);
+                }
+
+                // UPDATE IMAGE
+                updateImage(tipo, id, `${nameFile}.webp`, desc);
+
+                res.json({
+                    ok: true,
+                    msg: 'Imagen Actualizada',
+                    nombreArchivo: nameFile
+                });
+            }
+
+
         });
+
     });
+
+
+
+
+
+
+
+
 
 
 };

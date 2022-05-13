@@ -19,6 +19,15 @@ const search = async(req, res = response) => {
     let data = [];
     let total;
 
+    const numeros = /^[0-9]+$/;
+    let number = false;
+
+    if (busqueda.match(numeros)) {
+        number = true;
+    } else {
+        number = false;
+    }
+
     switch (tabla) {
 
         case 'users':
@@ -76,20 +85,38 @@ const search = async(req, res = response) => {
 
         case 'preventives':
 
-            // data = await Client.find({ name: regex });
-            [data, total] = await Promise.all([
-                Preventive.find({
-                    $or: [
-                        { control: regex },
-                        { estado: regex }
-                    ]
-                })
-                .populate('client', 'name cedula phone email address city')
-                .populate('create', 'name')
-                .populate('staff', 'name')
-                .populate('product', 'code serial brand model year status estado next img'),
-                Preventive.countDocuments()
-            ]);
+            // COMPROBAR SI ES NUMERO
+            if (number) {
+
+                [data, total] = await Promise.all([
+                    Preventive.find({
+                        $or: [
+                            { control: busqueda }
+                        ]
+                    })
+                    .populate('client', 'name cedula phone email address city')
+                    .populate('create', 'name')
+                    .populate('staff', 'name')
+                    .populate('product', 'code serial brand model year status estado next img'),
+                    Preventive.countDocuments()
+                ]);
+
+            } else {
+                [data, total] = await Promise.all([
+                    Preventive.find({
+                        $or: [
+                            { estado: regex }
+                        ]
+                    })
+                    .populate('client', 'name cedula phone email address city')
+                    .populate('create', 'name')
+                    .populate('staff', 'name')
+                    .populate('product', 'code serial brand model year status estado next img'),
+                    Preventive.countDocuments()
+                ]);
+            }
+
+
             break;
 
         default:

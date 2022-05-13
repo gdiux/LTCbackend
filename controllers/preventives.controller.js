@@ -3,6 +3,21 @@ const { response } = require('express');
 const Preventive = require('../models/preventives.model');
 
 /** =====================================================================
+ *  GET ROLE
+=========================================================================*/
+const getRole = (role) => {
+
+    if (role === 'ADMIN') {
+        return 'Administrador';
+    } else if (role === 'TECH') {
+        return 'Tecnico';
+    } else {
+        return 'Usuario';
+    }
+
+}
+
+/** =====================================================================
  *  GET PREVENTIVES
 =========================================================================*/
 const getPreventives = async(req, res = response) => {
@@ -17,6 +32,7 @@ const getPreventives = async(req, res = response) => {
             Preventive.find()
             .populate('create', 'name')
             .populate('staff', 'name')
+            .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
             .populate('product', 'code serial brand model year status estado next img')
             .skip(desde)
@@ -44,6 +60,51 @@ const getPreventives = async(req, res = response) => {
  *  GET PREVENTIVES
 =========================================================================*/
 /** =====================================================================
+ *  GET PREVENTIVE FOR ID
+=========================================================================*/
+const getPreventiveId = async(req, res = response) => {
+
+    try {
+
+        const preid = req.params.id;
+
+        const preventiveDB = await Preventive.findById(preid)
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img');
+
+        if (!preventiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun mantenimiento preventivo con este ID'
+            });
+        }
+
+        // TRANSFORMAR ROLE
+        preventiveDB.staff.role = getRole(preventiveDB.staff.role);
+
+        res.json({
+            ok: true,
+            preventive: preventiveDB
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente de nuevo'
+        });
+    }
+
+};
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR ID
+=========================================================================*/
+/** =====================================================================
  *  CREATE PREVENTIVE
 =========================================================================*/
 const createPreventive = async(req, res = response) => {
@@ -55,6 +116,12 @@ const createPreventive = async(req, res = response) => {
         // SAVE PREVENTIVE
         const preventive = new Preventive(req.body);
         preventive.create = uid;
+
+        // AGREGAMOS EL PRIMER COMENTARIO
+        preventive.notes.push({
+            note: 'Se ha creado el mantenimiento preventivo',
+            staff: uid
+        });
 
         await preventive.save();
 
@@ -77,6 +144,66 @@ const createPreventive = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  CREATE NOTES IN PREVENTIVE
+=========================================================================*/
+const postNotes = async(req, res = response) => {
+
+    try {
+
+        const preid = req.params.id;
+        const uid = req.uid;
+
+        // SEARCH PREVENTIVE
+        const preventiveDB = await Preventive.findById(preid);
+        if (!preventiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun Mantenimiento Preventivo con este ID'
+            });
+        }
+        // SEARCH PREVENTIVE
+
+        const nota = req.body;
+
+        // AGREGAMOS AL USUARIO
+        nota.staff = uid;
+
+        // AGREGAMOS EL NUEVO COMENTARIO
+        preventiveDB.notes.push(nota);
+
+        // UPDATE
+        const preventiveUpdate = await Preventive.findByIdAndUpdate(preid, { notes: preventiveDB.notes }, { new: true })
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img');
+
+        // TRANSFORMAR ROLE
+        preventiveUpdate.staff.role = getRole(preventiveDB.staff.role);
+
+        res.json({
+            ok: true,
+            preventive: preventiveUpdate
+        });
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+}
+
+/** =====================================================================
+ *  CREATE NOTES IN PREVENTIVE
+=========================================================================*/
+
+/** =====================================================================
  *  UPDATE PREVENTIVES
 =========================================================================*/
 const updatePreventives = async(req, res = response) => {
@@ -87,10 +214,11 @@ const updatePreventives = async(req, res = response) => {
 
         // SEARCH CLIENT
         const preventiveDB = await Preventive.findById({ _id: preid });
+
         if (!preventiveDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No existe ningun usuario con este ID'
+                msg: 'No existe ningun Mantenimiento Preventivo con este ID'
             });
         }
         // SEARCH CLIENT
@@ -99,7 +227,14 @@ const updatePreventives = async(req, res = response) => {
         const {...campos } = req.body;
 
         // UPDATE
-        const preventiveUpdate = await Preventive.findByIdAndUpdate(preid, campos, { new: true, useFindAndModify: false });
+        const preventiveUpdate = await Preventive.findByIdAndUpdate(preid, campos, { new: true, useFindAndModify: false })
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img');
+
+        // TRANSFORMAR ROLE
+        preventiveUpdate.staff.role = getRole(preventiveDB.staff.role);
 
         res.json({
             ok: true,
@@ -135,7 +270,7 @@ const deletePreventives = async(req, res = response) => {
         if (!preventiveDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No existe ningun usuario con este ID'
+                msg: 'No existe ningun Mantenimiento Preventivo con este ID'
             });
         }
         // SEARCH PREVENTIVE
@@ -174,5 +309,7 @@ module.exports = {
     getPreventives,
     createPreventive,
     updatePreventives,
-    deletePreventives
+    deletePreventives,
+    getPreventiveId,
+    postNotes
 };

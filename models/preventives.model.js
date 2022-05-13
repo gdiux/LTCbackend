@@ -28,6 +28,24 @@ const VideoSchema = Schema({
 
 });
 
+const NotesSchema = Schema({
+
+    note: {
+        type: String
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+    staff: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
+
+});
+
 const PreventivesSchema = Schema({
 
     control: {
@@ -54,9 +72,7 @@ const PreventivesSchema = Schema({
         ref: 'Clients'
     },
 
-    note: {
-        type: String
-    },
+    notes: [NotesSchema],
 
     items: [ItemsSchema],
 
@@ -76,11 +92,11 @@ const PreventivesSchema = Schema({
         default: 'Pendiente'
     },
 
-    datein: {
+    checkin: {
         type: Date
     },
 
-    dateout: {
+    checkout: {
         type: Date
     },
 

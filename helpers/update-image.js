@@ -3,6 +3,7 @@ const fs = require('fs');
 // MODELS
 const Product = require('../models/products.model');
 const User = require('../models/users.model');
+const Preventive = require('../models/preventives.model');
 
 /** =====================================================================
  *  DELETE IMAGE
@@ -25,7 +26,7 @@ const deleteImage = (path) => {
 /** =====================================================================
  *  UPDATE IMAGE 
 =========================================================================*/
-const updateImage = async(tipo, id, nameFile) => {
+const updateImage = async(tipo, id, nameFile, desc) => {
 
     let pathOld = '';
 
@@ -64,6 +65,49 @@ const updateImage = async(tipo, id, nameFile) => {
             // SAVE IMAGE
             user.img = nameFile;
             await user.save();
+            return true;
+
+            break;
+        case 'preventives':
+
+            // SEARCH USER BY ID
+            const preventivesDB = await Preventive.findById(id);
+            if (!preventivesDB) {
+                return false;
+            }
+
+            // SAVE IMAGE imgBef imgAft video
+            console.log(desc);
+
+            if (desc === 'imgBef') {
+                console.log('imagen antes');
+                preventivesDB.imgBef.push({
+                    img: nameFile
+                });
+                await preventivesDB.save();
+            } else if (desc === 'imgAft') {
+
+                console.log('imagen Despues');
+                preventivesDB.imgAft.push({
+                    img: nameFile
+                });
+
+                await preventivesDB.save();
+
+            } else if (desc === 'video') {
+                console.log('Video');
+
+                preventivesDB.video.push({
+                    video: nameFile
+                });
+
+                await preventivesDB.save();
+            } else {
+                console.log('No IMG');
+                return false;
+            }
+
+
             return true;
 
             break;
