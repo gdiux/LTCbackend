@@ -61,7 +61,7 @@ const fileUpload = async(req, res = response) => {
     }
     // VALID EXT
 
-    // GENERATE NAME
+    // GENERATE NAME UID
     const nameFile = `${ uuidv4() }.webp`;
 
     // PATH IMAGE
