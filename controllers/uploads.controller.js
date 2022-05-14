@@ -79,7 +79,8 @@ const fileUpload = async(req, res = response) => {
             res.json({
                 ok: true,
                 msg: 'Imagen Actualizada',
-                nombreArchivo: nameFile
+                nombreArchivo: nameFile,
+                date: Date.now()
             });
 
         });

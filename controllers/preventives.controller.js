@@ -104,6 +104,48 @@ const getPreventiveId = async(req, res = response) => {
 /** =====================================================================
  *  GET PREVENTIVE FOR ID
 =========================================================================*/
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR STAFF
+=========================================================================*/
+const getPreventiveStaff = async(req, res = response) => {
+
+    try {
+
+        const staff = req.params.staff;
+        const status = req.query.status;
+        const estado = req.query.estado;
+
+        console.log(staff);
+
+        const preventives = await Preventive.find({ staff, estado })
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img');
+
+        res.json({
+            ok: true,
+            preventives,
+            total: preventives.length
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente de nuevo'
+        });
+    }
+
+}
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR STAFF
+=========================================================================*/
+
 /** =====================================================================
  *  CREATE PREVENTIVE
 =========================================================================*/
@@ -311,5 +353,6 @@ module.exports = {
     updatePreventives,
     deletePreventives,
     getPreventiveId,
-    postNotes
+    postNotes,
+    getPreventiveStaff
 };

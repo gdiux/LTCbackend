@@ -17,6 +17,11 @@ const ItemsSchema = Schema({
 const ImgSchema = Schema({
     img: {
         type: String
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
     }
 
 });
@@ -24,6 +29,10 @@ const ImgSchema = Schema({
 const VideoSchema = Schema({
     video: {
         type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now()
     }
 
 });

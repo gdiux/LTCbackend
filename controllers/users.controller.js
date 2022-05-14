@@ -35,6 +35,42 @@ const getUsers = async(req, res) => {
 /** =====================================================================
  *  GET USERS
 =========================================================================*/
+
+/** =====================================================================
+ *  GET USERS ID
+=========================================================================*/
+const getUserId = async(req, res = response) => {
+
+    try {
+        const id = req.params.id;
+
+        const userDB = await User.findById(id);
+        if (!userDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No hemos encontrado este usuario, porfavor intente nuevamente.'
+            });
+        }
+
+        res.json({
+            ok: true,
+            user: userDB
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+/** =====================================================================
+ *  GET USERS ID
+=========================================================================*/
+
 /** =====================================================================
  *  CREATE USERS
 =========================================================================*/
@@ -192,5 +228,6 @@ module.exports = {
     getUsers,
     createUsers,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserId
 };

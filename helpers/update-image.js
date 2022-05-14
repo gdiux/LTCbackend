@@ -77,33 +77,31 @@ const updateImage = async(tipo, id, nameFile, desc) => {
             }
 
             // SAVE IMAGE imgBef imgAft video
-            console.log(desc);
 
             if (desc === 'imgBef') {
-                console.log('imagen antes');
+
                 preventivesDB.imgBef.push({
-                    img: nameFile
+                    img: nameFile,
+                    date: Date.now()
                 });
                 await preventivesDB.save();
             } else if (desc === 'imgAft') {
-
-                console.log('imagen Despues');
                 preventivesDB.imgAft.push({
-                    img: nameFile
+                    img: nameFile,
+                    date: Date.now()
                 });
 
                 await preventivesDB.save();
 
             } else if (desc === 'video') {
-                console.log('Video');
 
                 preventivesDB.video.push({
-                    video: nameFile
+                    video: nameFile,
+                    date: Date.now()
                 });
 
                 await preventivesDB.save();
             } else {
-                console.log('No IMG');
                 return false;
             }
 
