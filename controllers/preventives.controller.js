@@ -1,6 +1,7 @@
 const { response } = require('express');
 
 const Preventive = require('../models/preventives.model');
+const Product = require('../models/products.model');
 
 /** =====================================================================
  *  GET ROLE
@@ -73,7 +74,7 @@ const getPreventiveId = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img frecuencia');
 
         if (!preventiveDB) {
             return res.status(400).json({
@@ -121,7 +122,8 @@ const getPreventiveStaff = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img')
+            .sort({ control: -1 });
 
         res.json({
             ok: true,
@@ -204,6 +206,8 @@ const createPreventive = async(req, res = response) => {
         });
 
         await preventive.save();
+
+        const product = await Product.findByIdAndUpdate(preventive.product, ({ preventivo: true }), { new: true, useFindAndModify: false });
 
         res.json({
             ok: true,
@@ -311,10 +315,22 @@ const updatePreventives = async(req, res = response) => {
             .populate('create', 'name role img')
             .populate('staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img pid');
 
         // TRANSFORMAR ROLE
         preventiveUpdate.staff.role = getRole(preventiveDB.staff.role);
+
+        if (campos.check) {
+            const frecuencia = campos.frecuencia;
+
+            let next = new Date(Date.now());
+            next = new Date(next.setMonth(next.getMonth() + frecuencia));
+
+            await Product.findByIdAndUpdate(preventiveUpdate.product._id, ({ preventivo: false, next, frecuencia }), { new: true, useFindAndModify: false });
+
+        }
+
+
 
         res.json({
             ok: true,

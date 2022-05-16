@@ -10,67 +10,58 @@ const getProducts = async(req, res = response) => {
     try {
 
         const tipo = req.query.tipo || 'none';
-        const brand = req.query.brand || 'none';
+        const preventivo = req.query.preventivo | false;
+
+        const initial = '01/01/2001';
+        let end = Date.now();
+
+        const desde = Number(req.query.desde) | 0;
+        const limite = Number(req.query.limite) | 10;
+        const status = Boolean(req.query.status) | true;
         const valor = req.query.valor || 'false';
-        const initial = req.query.initial || '01/01/2001';
-        const end = req.query.end || new Date();
-        const desde = Number(req.query.desde) || 0;
-        const limite = Number(req.query.limite) || 10;
-        const status = req.query.status || false;
 
-        const products = await Product.find()
-            .populate('client', 'name cid')
-            .skip(desde)
-            .limit(limite);
-
-        // let products;
-        // switch (tipo) {
-        //     case 'brand':
-
-        //         if (brand !== 'none') {
-
-        //             products = await Product.find({ brand: brand })
-        //                 .populate('Clients', 'name')
-        //                 .sort({ out: -1 })
-        //                 .skip(desde)
-        //                 .limit(1000);
-
-        //         } else {
-
-        //             products = await Product.find()
-        //                 .populate('Clients', 'name')
-        //                 .sort({ out: -1 })
-        //                 .skip(desde)
-        //                 .limit(1000);
-        //         }
+        let products = [];
+        let total = 0;
 
 
-        //         break;
-        //     case 'none':
 
-        //         if (brand !== 'none') {
+        switch (tipo) {
+            case 'none':
 
-        //             products = await Product.find({ brand: brand })
-        //                 .populate('Clients', 'name')
-        //                 .skip(desde)
-        //                 .limit(1000);
+                [products, total] = await Promise.all([
+                    Product.find()
+                    .populate('client', 'name cid phone address')
+                    .skip(desde)
+                    .limit(limite),
+                    Product.countDocuments()
 
-        //         } else {
+                ]);
 
-        //             products = await Product.find()
-        //                 .populate('Clients', 'name')
-        //                 .skip(desde)
-        //                 .limit(limite);
+                break;
 
-        //         }
+            case 'proximos':
 
-        //         break;
+                end = new Date(end);
+                end = end.setDate(end.getDate() + 7);
 
-        //     default:
-        //         break;
-        // }
+                [products, total] = await Promise.all([
+                    Product.find({
+                        $and: [{ next: { $gte: new Date(initial), $lt: new Date(end) } }],
+                        preventivo,
+                        status
+                    })
+                    .populate('client', 'name cid phone address')
+                    .skip(desde)
+                    .limit(1000),
+                    Product.length
+                ]);
 
-        const total = await Product.countDocuments();
+                break;
+
+            default:
+                break;
+        }
+
 
         res.json({
             ok: true,
@@ -167,6 +158,9 @@ const createProduct = async(req, res = response) => {
 
         // SAVE PRODUCT
         const product = new Product(req.body);
+
+        let next = new Date(Date.now());
+        product.next = new Date(next.setMonth(next.getMonth() + req.body.frecuencia));
 
         await product.save();
 

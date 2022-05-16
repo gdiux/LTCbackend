@@ -44,6 +44,16 @@ const ProductSchema = Schema({
         ref: 'Clients',
     },
 
+    preventivo: {
+        type: Boolean,
+        default: false
+    },
+
+    frecuencia: {
+        type: Number,
+        default: 3
+    },
+
     next: {
         type: Date
     },
