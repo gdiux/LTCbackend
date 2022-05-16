@@ -180,6 +180,8 @@ const updateUser = async(req, res = response) => {
 =========================================================================*/
 const deleteUser = async(req, res = response) => {
 
+    const id = req.uid;
+
     const uid = req.params.id;
 
     try {
@@ -196,7 +198,11 @@ const deleteUser = async(req, res = response) => {
 
         // CHANGE STATUS
         if (userDB.status === true) {
-            userDB.status = false;
+
+            if (id !== uid) {
+                userDB.status = false;
+            }
+
         } else {
             userDB.status = true;
         }

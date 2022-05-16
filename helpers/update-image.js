@@ -4,6 +4,7 @@ const fs = require('fs');
 const Product = require('../models/products.model');
 const User = require('../models/users.model');
 const Preventive = require('../models/preventives.model');
+const Corrective = require('../models/correctives.model');
 
 /** =====================================================================
  *  DELETE IMAGE
@@ -101,6 +102,48 @@ const updateImage = async(tipo, id, nameFile, desc) => {
                 });
 
                 await preventivesDB.save();
+            } else {
+                return false;
+            }
+
+
+            return true;
+
+            break;
+
+        case 'correctives':
+
+            // SEARCH USER BY ID
+            const correctiveDB = await Corrective.findById(id);
+            if (!correctiveDB) {
+                return false;
+            }
+
+            // SAVE IMAGE imgBef imgAft video
+
+            if (desc === 'imgBef') {
+
+                correctiveDB.imgBef.push({
+                    img: nameFile,
+                    date: Date.now()
+                });
+                await correctiveDB.save();
+            } else if (desc === 'imgAft') {
+                correctiveDB.imgAft.push({
+                    img: nameFile,
+                    date: Date.now()
+                });
+
+                await correctiveDB.save();
+
+            } else if (desc === 'video') {
+
+                correctiveDB.video.push({
+                    video: nameFile,
+                    date: Date.now()
+                });
+
+                await correctiveDB.save();
             } else {
                 return false;
             }

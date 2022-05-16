@@ -100,8 +100,7 @@ const oneProduct = async(req, res = response) => {
     try {
 
         const product = await Product.findById(id)
-            .populate('kit.product', 'name')
-            .populate('brand', 'name');
+            .populate('client', 'name phone address');
 
         res.json({
             ok: true,

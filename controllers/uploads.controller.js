@@ -5,10 +5,6 @@ const fs = require('fs');
 
 const sharp = require('sharp');
 
-// INSTALL WEB CONVERTER
-// const webp = require('webp-converter');
-// webp.grant_permission();
-
 const { response } = require('express');
 const { v4: uuidv4 } = require('uuid');
 
@@ -17,6 +13,7 @@ const { updateImage } = require('../helpers/update-image');
 
 // MODELS
 const Preventive = require('../models/preventives.model');
+const Corrective = require('../models/correctives.model');
 
 /** =====================================================================
  *  UPLOADS
@@ -25,9 +22,9 @@ const fileUpload = async(req, res = response) => {
 
     const tipo = req.params.tipo;
     const id = req.params.id;
-    const desc = req.query.desc;
+    const desc = req.query.desc || 'img';
 
-    const validType = ['products', 'logo', 'user', 'preventives'];
+    const validType = ['products', 'logo', 'user', 'preventives', 'correctives'];
 
     // VALID TYPES
     if (!validType.includes(tipo)) {
@@ -135,16 +132,8 @@ const deleteImg = async(req, res = response) => {
 
                 let preventiveUpdate;
                 if (desc === 'imgBef') {
-                    // const imgBef = {
-                    //     _id: imgId,
-                    //     img
-                    // };
                     preventiveUpdate = await Preventive.updateOne({ _id: id }, { $pull: { imgBef: { img } } });
                 } else if (desc === 'imgAft') {
-                    // const imgAft = {
-                    //     _id: imgId,
-                    //     img
-                    // };
                     preventiveUpdate = await Preventive.updateOne({ _id: id }, { $pull: { imgAft: { img } } });
                 }
 
@@ -163,7 +152,6 @@ const deleteImg = async(req, res = response) => {
                     fs.unlinkSync(path);
                 }
 
-
                 const preventive = await Preventive.findById(id)
                     .populate('create', 'name role img')
                     .populate('staff', 'name role img')
@@ -174,6 +162,44 @@ const deleteImg = async(req, res = response) => {
                 res.json({
                     ok: true,
                     preventive
+                });
+
+                break;
+
+            case 'correctives':
+
+                let correctiveUpdate;
+                if (desc === 'imgBef') {
+                    correctiveUpdate = await Corrective.updateOne({ _id: id }, { $pull: { imgBef: { img } } });
+                } else if (desc === 'imgAft') {
+                    correctiveUpdate = await Corrective.updateOne({ _id: id }, { $pull: { imgAft: { img } } });
+                }
+
+                // VERIFICAR SI SE ACTUALIZO
+                if (correctiveUpdate.nModified === 0) {
+                    return res.status(400).json({
+                        ok: false,
+                        msg: 'No se pudo eliminar esta imagen, porfavor intente de nuevo'
+                    });
+                }
+
+                // ELIMINAR IMAGEN DE LA CARPETA
+                const pathc = `./uploads/${ type }/${ img }`;
+                if (fs.existsSync(pathc)) {
+                    // DELET IMAGE OLD
+                    fs.unlinkSync(pathc);
+                }
+
+                const corrective = await Corrective.findById(id)
+                    .populate('create', 'name role img')
+                    .populate('staff', 'name role img')
+                    .populate('notes.staff', 'name role img')
+                    .populate('client', 'name cedula phone email address city')
+                    .populate('product', 'code serial brand model year status estado next img');
+
+                res.json({
+                    ok: true,
+                    corrective
                 });
 
                 break;

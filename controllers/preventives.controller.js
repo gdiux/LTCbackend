@@ -116,8 +116,6 @@ const getPreventiveStaff = async(req, res = response) => {
         const status = req.query.status;
         const estado = req.query.estado;
 
-        console.log(staff);
-
         const preventives = await Preventive.find({ staff, estado })
             .populate('create', 'name role img')
             .populate('staff', 'name role img')
@@ -144,6 +142,46 @@ const getPreventiveStaff = async(req, res = response) => {
 
 /** =====================================================================
  *  GET PREVENTIVE FOR STAFF
+=========================================================================*/
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR PRODUCT
+=========================================================================*/
+const getPreventiveProduct = async(req, res = response) => {
+
+    try {
+
+        const product = req.params.product;
+        const estado = req.query.estado;
+
+        const preventives = await Preventive.find({ product, estado })
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img')
+            .limit(20)
+            .sort({ control: -1 });
+
+        res.json({
+            ok: true,
+            preventives,
+            total: preventives.length
+        });
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente de nuevo'
+        });
+    }
+
+}
+
+/** =====================================================================
+ *  GET PREVENTIVE FOR PRODUCT
 =========================================================================*/
 
 /** =====================================================================
@@ -354,5 +392,6 @@ module.exports = {
     deletePreventives,
     getPreventiveId,
     postNotes,
-    getPreventiveStaff
+    getPreventiveStaff,
+    getPreventiveProduct
 };

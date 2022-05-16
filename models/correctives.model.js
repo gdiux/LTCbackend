@@ -17,6 +17,11 @@ const ItemsSchema = Schema({
 const ImgSchema = Schema({
     img: {
         type: String
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
     }
 
 });
@@ -24,6 +29,28 @@ const ImgSchema = Schema({
 const VideoSchema = Schema({
     video: {
         type: String
+    },
+    date: {
+        type: Date,
+        default: Date.now()
+    }
+
+});
+
+const NotesSchema = Schema({
+
+    note: {
+        type: String
+    },
+
+    date: {
+        type: Date,
+        default: Date.now()
+    },
+
+    staff: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 
 });
@@ -58,9 +85,7 @@ const CorrectivesSchema = Schema({
         type: String
     },
 
-    note: {
-        type: String
-    },
+    notes: [NotesSchema],
 
     items: [ItemsSchema],
 
@@ -70,13 +95,22 @@ const CorrectivesSchema = Schema({
 
     video: [VideoSchema],
 
+    checkin: {
+        type: Date
+    },
+
+    checkout: {
+        type: Date
+    },
+
     status: {
         type: Boolean,
         default: true
     },
 
     estado: {
-        type: String
+        type: String,
+        default: 'Pendiente'
     },
 
     date: {
