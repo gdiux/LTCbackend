@@ -107,7 +107,7 @@ const getPreventiveId = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
- *  GET PREVENTIVE FOR STAFF SORT -1
+ *  GET PREVENTIVE FOR STAFF
 =========================================================================*/
 const getPreventiveStaff = async(req, res = response) => {
 
