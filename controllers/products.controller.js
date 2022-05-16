@@ -53,13 +53,17 @@ const getProducts = async(req, res = response) => {
                     .populate('client', 'name cid phone address')
                     .skip(desde)
                     .limit(1000),
-                    Product.length
+                    0
                 ]);
 
                 break;
 
             default:
                 break;
+        }
+
+        if (tipo === 'proximos') {
+            total = products.length;
         }
 
 
