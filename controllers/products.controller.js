@@ -66,7 +66,6 @@ const getProducts = async(req, res = response) => {
             total = products.length;
         }
 
-
         res.json({
             ok: true,
             products,
