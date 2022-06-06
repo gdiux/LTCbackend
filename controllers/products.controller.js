@@ -114,6 +114,36 @@ const oneProduct = async(req, res = response) => {
 
 };
 
+/** =====================================================================
+ *  GET PRODUCTS OF CLIENT
+=========================================================================*/
+const getProductsClients = async(req, res = response) => {
+
+    try {
+
+        const client = req.params.id;
+
+        const products = await Product.find({ client })
+            .populate('client', 'name cid phone address');
+
+        res.json({
+            ok: true,
+            products
+        });
+
+
+    } catch (error) {
+
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+};
+
 
 
 /** =====================================================================
@@ -352,5 +382,6 @@ module.exports = {
     deleteProduct,
     oneProduct,
     updateClientProduct,
-    productsExcel
+    productsExcel,
+    getProductsClients
 };

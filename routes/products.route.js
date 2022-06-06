@@ -15,9 +15,8 @@ const {
     updateProduct,
     deleteProduct,
     oneProduct,
-    codeProduct,
-    productsExcel,
     updateClientProduct,
+    getProductsClients,
 } = require('../controllers/products.controller');
 
 const router = Router();
@@ -25,25 +24,25 @@ const router = Router();
 /** =====================================================================
  *  GET PRODUCTS
 =========================================================================*/
-router.get('/', getProducts);
+router.get('/', validarJWT, getProducts);
 /** =====================================================================
  *  GET PRODUCTS 
 =========================================================================*/
 
 /** =====================================================================
- *  GET PRODUCT EXCEL
+ *  ONE GET PRODUCT
 =========================================================================*/
-router.get('/excel/', productsExcel);
+router.get('/:id', validarJWT, oneProduct);
 /** =====================================================================
- *  GET PRODUCT EXCEL
+ *  ONE GET PRODUCT
 =========================================================================*/
 
 /** =====================================================================
- *  ONE GET PRODUCT
+ *  GET PRODUCTS CLIENTS
 =========================================================================*/
-router.get('/:id', oneProduct);
+router.get('/client/:id', validarJWT, getProductsClients);
 /** =====================================================================
- *  ONE GET PRODUCT
+ *  GET PRODUCTS CLIENTS
 =========================================================================*/
 
 /** =====================================================================
