@@ -70,6 +70,8 @@ const fileUpload = async(req, res = response) => {
         .webp({ equality: 75, effort: 6 })
         .toFile(path, (err, info) => {
 
+            console.log(err);
+
             // UPDATE IMAGE
             updateImage(tipo, id, nameFile, desc);
 
