@@ -71,6 +71,7 @@ const fileUpload = async(req, res = response) => {
         .toFile(path, (err, info) => {
 
             console.log(err);
+            console.log('info: ', info);
 
             // UPDATE IMAGE
             updateImage(tipo, id, nameFile, desc);
