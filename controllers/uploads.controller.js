@@ -26,8 +26,6 @@ const fileUpload = async(req, res = response) => {
 
     const validType = ['products', 'logo', 'user', 'preventives', 'correctives'];
 
-    console.log('req', req.files);
-
     // VALID TYPES
     if (!validType.includes(tipo)) {
         return res.status(400).json({
@@ -46,8 +44,6 @@ const fileUpload = async(req, res = response) => {
 
     // PROCESS IMAGE
     const file = await sharp(req.files.image.data).metadata();
-
-    console.log('file: ', file);
 
     // const nameShort = file.format.split('.');
     const extFile = file.format;
@@ -73,9 +69,6 @@ const fileUpload = async(req, res = response) => {
         .resize(1024, 768)
         .webp({ equality: 75, effort: 6 })
         .toFile(path, (err, info) => {
-
-            console.log(err);
-            console.log('info: ', info);
 
             // UPDATE IMAGE
             updateImage(tipo, id, nameFile, desc);
