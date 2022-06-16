@@ -45,6 +45,8 @@ const fileUpload = async(req, res = response) => {
     // PROCESS IMAGE
     const file = await sharp(req.files.image.data).metadata();
 
+    console.log('file: ', file);
+
     // const nameShort = file.format.split('.');
     const extFile = file.format;
 
