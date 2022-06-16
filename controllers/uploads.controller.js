@@ -26,6 +26,8 @@ const fileUpload = async(req, res = response) => {
 
     const validType = ['products', 'logo', 'user', 'preventives', 'correctives'];
 
+    console.log('req', req.files);
+
     // VALID TYPES
     if (!validType.includes(tipo)) {
         return res.status(400).json({
