@@ -28,6 +28,7 @@ dbConection();
 app.use(express.static('public'));
 
 // RUTAS
+app.use('/api/abonados', require('./routes/abonados.route'));
 app.use('/api/clients', require('./routes/clients.route'));
 app.use('/api/correctives', require('./routes/correctives.route'));
 
