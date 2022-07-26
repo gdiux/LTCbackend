@@ -44,11 +44,12 @@ const getAbonadoId = async(req, res = response) => {
     try {
         const id = req.params.id;
 
-        const abonadoDB = await Abonado.findById(id);
+        const abonadoDB = await Abonado.findById(id)
+            .populate('clients.client', 'name cid phone address city status');
         if (!abonadoDB) {
             return res.status(400).json({
                 ok: false,
-                msg: 'No hemos encontrado este usuario, porfavor intente nuevamente.'
+                msg: 'No hemos encontrado este Abonado, porfavor intente nuevamente.'
             });
         }
 
@@ -113,6 +114,90 @@ const createAbonado = async(req, res = response) => {
 };
 /** =====================================================================
  *  CREATE ABONADO
+=========================================================================*/
+
+/** =====================================================================
+ *  ADD CLIENT
+=========================================================================*/
+const addClient = async(req, res = response) => {
+
+    try {
+
+        const client = req.params.client;
+        const aid = req.params.id;
+
+        const abonadoDB = await Abonado.findById(aid);
+        if (!abonadoDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No hemos encontrado este abonado, porfavor intente nuevamente.'
+            });
+        }
+
+        abonadoDB.clients.push({ client });
+
+        const abonadoUpdate = await Abonado.findByIdAndUpdate(aid, { clients: abonadoDB.clients }, { new: true, useFindAndModify: false })
+            .populate('clients.client', 'name cid phone address city status');
+
+        res.json({
+            ok: true,
+            abonado: abonadoUpdate
+        });
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error Inesperado'
+        });
+    }
+
+};
+/** =====================================================================
+ *  ADD CLIENT
+=========================================================================*/
+
+/** =====================================================================
+ *  DEL CLIENT
+=========================================================================*/
+const delClient = async(req, res = response) => {
+
+    try {
+
+        const client = req.params.client;
+        const aid = req.params.id;
+
+        const abonadoUpdate = await Abonado.updateOne({ _id: aid }, { $pull: { clients: { client } } });
+
+        // VERIFICAR SI SE ACTUALIZO
+        if (abonadoUpdate.nModified === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No se pudo eliminar esta imagen, porfavor intente de nuevo'
+            });
+        }
+
+        const abonado = await Abonado.findById(aid)
+            .populate('clients.client', 'name cid phone address city status');
+
+        res.json({
+            ok: true,
+            abonado
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error Inesperado'
+        });
+    }
+
+};
+/** =====================================================================
+ *  DEL CLIENT
 =========================================================================*/
 
 /** =====================================================================
@@ -235,5 +320,7 @@ module.exports = {
     createAbonado,
     updateAbonado,
     deleteAbonado,
-    getAbonadoId
+    getAbonadoId,
+    addClient,
+    delClient
 };

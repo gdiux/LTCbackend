@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { getAbonados, createAbonado, updateAbonado, deleteAbonado, getAbonadoId } = require('../controllers/abonados.controller');
+const { getAbonados, createAbonado, updateAbonado, deleteAbonado, getAbonadoId, addClient, delClient } = require('../controllers/abonados.controller');
 
 const router = Router();
 
@@ -41,6 +41,22 @@ router.post('/', [
 /** =====================================================================
  *  POST CREATE ABONADO
 =========================================================================*/
+/** =====================================================================
+ *  ADD CLIENT ABONADO
+=========================================================================*/
+router.post('/add/:client/:id', validarJWT, addClient);
+/** =====================================================================
+ *  ADD CLIENT ABONADO
+=========================================================================*/
+
+/** =====================================================================
+ *  ADD CLIENT ABONADO
+=========================================================================*/
+router.delete('/del/:client/:id', validarJWT, delClient);
+/** =====================================================================
+ *  ADD CLIENT ABONADO
+=========================================================================*/
+
 /** =====================================================================
  *  PUT ABONADO
 =========================================================================*/
