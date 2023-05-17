@@ -4,6 +4,7 @@ const User = require('../models/users.model');
 const Client = require('../models/clients.model');
 const Product = require('../models/products.model');
 const Preventive = require('../models/preventives.model');
+const Corrective = require('../models/correctives.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -97,7 +98,7 @@ const search = async(req, res = response) => {
                     .populate('client', 'name cedula phone email address city')
                     .populate('create', 'name')
                     .populate('staff', 'name')
-                    .populate('product', 'code serial brand model year status estado next img'),
+                    .populate('product', 'code serial brand model year status estado next img ubicacion'),
                     Preventive.countDocuments()
                 ]);
 
@@ -111,8 +112,43 @@ const search = async(req, res = response) => {
                     .populate('client', 'name cedula phone email address city')
                     .populate('create', 'name')
                     .populate('staff', 'name')
-                    .populate('product', 'code serial brand model year status estado next img'),
+                    .populate('product', 'code serial brand model year status estado next img ubicacion'),
                     Preventive.countDocuments()
+                ]);
+            }
+
+
+            break;
+        case 'correctives':
+
+            // COMPROBAR SI ES NUMERO
+            if (number) {
+
+                [data, total] = await Promise.all([
+                    Corrective.find({
+                        $or: [
+                            { control: busqueda }
+                        ]
+                    })
+                    .populate('client', 'name cedula phone email address city')
+                    .populate('create', 'name')
+                    .populate('staff', 'name')
+                    .populate('product', 'code serial brand model year status estado next img ubicacion'),
+                    Corrective.countDocuments()
+                ]);
+
+            } else {
+                [data, total] = await Promise.all([
+                    Corrective.find({
+                        $or: [
+                            { estado: regex }
+                        ]
+                    })
+                    .populate('client', 'name cedula phone email address city')
+                    .populate('create', 'name')
+                    .populate('staff', 'name')
+                    .populate('product', 'code serial brand model year status estado next img ubicacion'),
+                    Corrective.countDocuments()
                 ]);
             }
 

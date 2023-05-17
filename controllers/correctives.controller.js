@@ -34,7 +34,7 @@ const getCorrectives = async(req, res = response) => {
             .populate('staff', 'name')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img')
+            .populate('product', 'code serial brand model year status estado next img ubicacion')
             .skip(desde)
             .limit(limite),
 
@@ -74,7 +74,7 @@ const getCorrectiveId = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
 
         if (!correctiveDB) {
             return res.status(400).json({
@@ -122,7 +122,7 @@ const getCorrectiveStaff = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
 
         res.json({
             ok: true,
@@ -160,7 +160,7 @@ const getCorrectiveProduct = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img')
+            .populate('product', 'code serial brand model year status estado next img ubicacion')
             .limit(20)
             .sort({ control: -1 });
 
@@ -258,7 +258,7 @@ const postNotesCorrectives = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
 
         // TRANSFORMAR ROLE
         correctiveUpdate.staff.role = getRole(correctiveDB.staff.role);
@@ -311,7 +311,7 @@ const updateCorrectives = async(req, res = response) => {
             .populate('create', 'name role img')
             .populate('staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img');
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
 
         res.json({
             ok: true,

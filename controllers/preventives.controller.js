@@ -35,7 +35,7 @@ const getPreventives = async(req, res = response) => {
             .populate('staff', 'name')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img')
+            .populate('product', 'code serial brand model year status estado next img ubicacion')
             .skip(desde)
             .limit(limite),
             Preventive.countDocuments()
@@ -74,7 +74,7 @@ const getPreventiveId = async(req, res = response) => {
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
             .populate('client', 'name cedula phone email address city')
-            .populate('product', 'code serial brand model year status estado next img frecuencia');
+            .populate('product', 'code serial brand model year status estado next img frecuencia ubicacion');
 
         if (!preventiveDB) {
             return res.status(400).json({
