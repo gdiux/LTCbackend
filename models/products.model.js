@@ -44,6 +44,10 @@ const ProductSchema = Schema({
         ref: 'Clients',
     },
 
+    ubicacion: {
+        type: String
+    },
+
     preventivo: {
         type: Boolean,
         default: false
