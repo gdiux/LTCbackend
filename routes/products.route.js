@@ -17,6 +17,7 @@ const {
     oneProduct,
     updateClientProduct,
     getProductsClients,
+    getCountPrefix,
 } = require('../controllers/products.controller');
 
 const router = Router();
@@ -43,6 +44,14 @@ router.get('/:id', validarJWT, oneProduct);
 router.get('/client/:id', validarJWT, getProductsClients);
 /** =====================================================================
  *  GET PRODUCTS CLIENTS
+=========================================================================*/
+
+/** =====================================================================
+ *  GET COUNTS PREFIX PRODUCT
+=========================================================================*/
+router.get('/count/:prefix', validarJWT, getCountPrefix);
+/** =====================================================================
+ *  GET COUNTS PREFIX PRODUCT
 =========================================================================*/
 
 /** =====================================================================

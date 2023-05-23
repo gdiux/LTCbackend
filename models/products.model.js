@@ -2,6 +2,10 @@ const { Schema, model } = require('mongoose');
 
 const ProductSchema = Schema({
 
+    prefix: {
+        type: String,
+    },
+
     code: {
         type: String,
         require: true,
@@ -61,6 +65,7 @@ const ProductSchema = Schema({
     next: {
         type: Date
     },
+
     img: {
         type: String
     },

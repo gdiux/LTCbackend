@@ -9,75 +9,52 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLERS
-const { getAbonados, createAbonado, updateAbonado, deleteAbonado, getAbonadoId, addClient, delClient } = require('../controllers/abonados.controller');
+const { getPrefixes, createPrefix, updatePrefix, getPrefixId } = require('../controllers/prefix.controller');
 
 const router = Router();
 
 /** =====================================================================
- *  GET ABONADOS
+ *  GET PREFIX
 =========================================================================*/
-router.get('/', validarJWT, getAbonados);
+router.get('/', validarJWT, getPrefixes);
 /** =====================================================================
- *  GET ABONADOS
+ *  GET PREFIX
 =========================================================================*/
+
 /** =====================================================================
- *  GET ABONADOS ID
+ *  GET PREFIX ID
 =========================================================================*/
-router.get('/abonado/:id', validarJWT, getAbonadoId);
+router.get('/:id', validarJWT, getPrefixId);
 /** =====================================================================
- *  GET ABONADOS ID
+ *  GET PREFIX ID
 =========================================================================*/
+
 /** =====================================================================
- *  POST CREATE ABONADO
+ *  POST CREATE PREFIX
 =========================================================================*/
 router.post('/', [
         validarJWT,
-        check('usuario', 'El usuario es obligatorio').not().isEmpty(),
         check('name', 'El nombre es olbigatorio').not().isEmpty(),
-        check('password', 'La contraseña es obligatoria').not().isEmpty(),
         validarCampos
     ],
-    createAbonado
+    createPrefix
 );
 /** =====================================================================
- *  POST CREATE ABONADO
-=========================================================================*/
-/** =====================================================================
- *  ADD CLIENT ABONADO
-=========================================================================*/
-router.post('/add/:client/:id', validarJWT, addClient);
-/** =====================================================================
- *  ADD CLIENT ABONADO
+ *  POST CREATE PREFIX
 =========================================================================*/
 
 /** =====================================================================
- *  ADD CLIENT ABONADO
-=========================================================================*/
-router.delete('/del/:client/:id', validarJWT, delClient);
-/** =====================================================================
- *  ADD CLIENT ABONADO
-=========================================================================*/
-
-/** =====================================================================
- *  PUT ABONADO
+ *  PUT PREFIX
 =========================================================================*/
 router.put('/:id', [
         validarJWT,
-        check('usuario', 'El usuario es obligatorio').not().isEmpty(),
         check('name', 'El nombre es olbigatorio').not().isEmpty(),
         validarCampos
     ],
-    updateAbonado
+    updatePrefix
 );
 /** =====================================================================
- *  PUT ABONADO
-=========================================================================*/
-/** =====================================================================
- *  DELETE ABONADO
-=========================================================================*/
-router.delete('/:id', validarJWT, deleteAbonado);
-/** =====================================================================
- *  DELETE ABONADO
+ *  PUT PREFIX
 =========================================================================*/
 
 

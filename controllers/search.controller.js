@@ -76,7 +76,8 @@ const search = async(req, res = response) => {
                         { serial: regex },
                         { brand: regex },
                         { model: regex },
-                        { estado: regex }
+                        { estado: regex },
+                        { prefix: regex },
                     ]
                 })
                 .populate('client', 'name phone cid'),

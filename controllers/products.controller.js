@@ -144,6 +144,36 @@ const getProductsClients = async(req, res = response) => {
 
 };
 
+/** ======================================================================
+ *  GET COUNT OF PREFIX
+=========================================================================*/
+const getCountPrefix = async(req, res) => {
+
+    try {
+
+        const prefix = req.params.prefix;
+        const total = await Product.countDocuments({ prefix });
+
+        res.json({
+            ok: true,
+            total: (total + 1)
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+
+    }
+
+
+};
+/** =====================================================================
+ *  GET COUNT OF PREFIX
+=========================================================================*/
+
 
 
 /** =====================================================================
@@ -383,5 +413,6 @@ module.exports = {
     oneProduct,
     updateClientProduct,
     productsExcel,
-    getProductsClients
+    getProductsClients,
+    getCountPrefix
 };
