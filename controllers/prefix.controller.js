@@ -77,6 +77,7 @@ const createPrefix = async(req, res = response) => {
 
     let name = req.body.name;
     name = name.toUpperCase();
+    name = name.trim();
 
     try {
 
@@ -129,7 +130,10 @@ const updatePrefix = async(req, res = response) => {
         // SEARCH USER
 
         // VALIDATE USER
-        const { name, ...campos } = req.body;
+        let { name, ...campos } = req.body;
+        name = name.toUpperCase();
+        name = name.trim();
+
         if (prefixDB.name !== name) {
             const validarPrefijo = await Prefix.findOne({ name });
             if (validarPrefijo) {
