@@ -199,9 +199,14 @@ const deleteUser = async(req, res = response) => {
         // CHANGE STATUS
         if (userDB.status === true) {
 
-            if (id !== uid) {
-                userDB.status = false;
+            if (id === uid) {
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'El mismo usuario no puede desactivarse o activarse'
+                });
             }
+
+            userDB.status = false;
 
         } else {
             userDB.status = true;
