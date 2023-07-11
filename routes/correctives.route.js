@@ -48,7 +48,7 @@ router.get('/product/:product', validarJWT, getCorrectiveProduct);
 /** =====================================================================
  *  GET CORRECTIVE FOR PRODUCT
 =========================================================================*/
-router.get('/pdf/:id', validarJWT, pdfCorrective);
+router.get('/pdf/:id', pdfCorrective);
 /** =====================================================================
  *  GET CORRECTIVE FOR PRODUCT
 =========================================================================*/
