@@ -85,6 +85,24 @@ const CorrectivesSchema = Schema({
         type: String
     },
 
+    solicitante: {
+        type: String
+    },
+
+    recibe: {
+        type: String
+    },
+
+    red: {
+        type: Boolean,
+        default: false
+    },
+
+    operativa: {
+        type: Boolean,
+        default: false
+    },
+
     notes: [NotesSchema],
 
     items: [ItemsSchema],

@@ -31,6 +31,7 @@ const getPreventives = async(req, res = response) => {
         const [preventives, total] = await Promise.all([
 
             Preventive.find()
+            .sort({ control: -1 })
             .populate('create', 'name')
             .populate('staff', 'name')
             .populate('notes.staff', 'name role img')

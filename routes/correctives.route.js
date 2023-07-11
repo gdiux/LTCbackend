@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getCorrectives, createCorrectives, updateCorrectives, deleteCorrectives, getCorrectiveId, getCorrectiveStaff, postNotesCorrectives, getCorrectiveProduct } = require('../controllers/correctives.controller');
+const { getCorrectives, createCorrectives, updateCorrectives, deleteCorrectives, getCorrectiveId, getCorrectiveStaff, postNotesCorrectives, getCorrectiveProduct, pdfCorrective } = require('../controllers/correctives.controller');
 
 
 
@@ -41,6 +41,14 @@ router.get('/staff/:staff', validarJWT, getCorrectiveStaff);
  *  GET CORRECTIVE FOR PRODUCT
 =========================================================================*/
 router.get('/product/:product', validarJWT, getCorrectiveProduct);
+/** =====================================================================
+ *  GET CORRECTIVE FOR PRODUCT
+=========================================================================*/
+
+/** =====================================================================
+ *  GET CORRECTIVE FOR PRODUCT
+=========================================================================*/
+router.get('/pdf/:id', validarJWT, pdfCorrective);
 /** =====================================================================
  *  GET CORRECTIVE FOR PRODUCT
 =========================================================================*/
