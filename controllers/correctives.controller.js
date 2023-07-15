@@ -370,7 +370,7 @@ const deleteCorrectives = async(req, res = response) => {
 
         res.json({
             ok: true,
-            client: correctiveUpdate
+            corrective: correctiveUpdate
         });
 
     } catch (error) {

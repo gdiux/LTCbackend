@@ -115,10 +115,10 @@ const getPreventiveStaff = async(req, res = response) => {
     try {
 
         const staff = req.params.staff;
-        const status = req.query.status;
+        const status = req.query.status || true;
         const estado = req.query.estado;
 
-        const preventives = await Preventive.find({ staff, estado })
+        const preventives = await Preventive.find({ staff, estado, status })
             .populate('create', 'name role img')
             .populate('staff', 'name role img')
             .populate('notes.staff', 'name role img')
@@ -384,7 +384,7 @@ const deletePreventives = async(req, res = response) => {
 
         res.json({
             ok: true,
-            client: PreventiveUpdate
+            preventive: PreventiveUpdate
         });
 
     } catch (error) {
