@@ -4,6 +4,8 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
+const sharp = require('sharp');
+
 const Corrective = require('../models/correctives.model');
 
 /** =====================================================================
@@ -421,7 +423,7 @@ const pdfCorrective = async(req, res = response) => {
         const parrafo = '';
 
         // Create a document
-        const doc = new PDFDocument();
+        const doc = new PDFDocument({ size: 'A4' });
 
         // Pipe its output somewhere, like to a file or HTTP response
         // See below for browser usage
@@ -610,8 +612,13 @@ const pdfCorrective = async(req, res = response) => {
                 });
         }
 
+
+
+        let altura = 700;
+
+        // FIRMAS
         doc
-            .text(`Tecnico: ${corretiveDB.staff.name}`, 150, 700, {
+            .text(`Tecnico: ${corretiveDB.staff.name}`, 150, (altura), {
                 continued: true,
             })
             .text(``, {
@@ -624,7 +631,78 @@ const pdfCorrective = async(req, res = response) => {
             });
 
 
+        doc.addPage({ size: 'A4' });
 
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text(``, {
+                continued: false,
+                width: 412,
+            });
+
+        if (corretiveDB.imgBef.length > 0) {
+
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .text(`Imagenes Antes del mantenimiento:`, {
+                    continued: false,
+                    width: 412,
+                    align: 'left',
+                    ellipsis: true
+                });
+
+            for (let i = 0; i < 2; i++) {
+                const pic = corretiveDB.imgBef[i];
+
+                const pathImg = path.join(__dirname, `../uploads/correctives/${pic.img}`);
+
+                if (fs.existsSync(pathImg)) {
+
+                    const img = await sharp(pathImg)
+                        .png()
+                        .toBuffer();
+
+                    await doc.image(img, { scale: 0.20, align: 'center' })
+                        .moveDown();
+                }
+
+
+            }
+        }
+
+
+
+        if (corretiveDB.imgAft.length > 0) {
+
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .moveDown()
+                .text(`Imagenes Despues del mantenimiento:`, {
+                    width: 412,
+                    align: 'left',
+                    ellipsis: true
+                });
+
+            for (let i = 0; i < 2; i++) {
+                const pic = corretiveDB.imgAft[i];
+
+                const pathImg = path.join(__dirname, `../uploads/correctives/${pic.img}`);
+
+                if (fs.existsSync(pathImg)) {
+
+                    const img = await sharp(pathImg)
+                        .png()
+                        .toBuffer();
+
+                    await doc.image(img, { scale: 0.20, align: 'center' })
+                        .moveDown();
+                }
+
+            }
+        }
 
 
 
