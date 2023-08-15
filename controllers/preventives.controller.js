@@ -1,5 +1,9 @@
 const { response } = require('express');
 
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+
 const Preventive = require('../models/preventives.model');
 const Product = require('../models/products.model');
 
@@ -398,6 +402,353 @@ const deletePreventives = async(req, res = response) => {
 };
 
 /** =====================================================================
+ *  PDF PREVENTIVE
+=========================================================================*/
+const pdfPreventive = async(req, res = response) => {
+
+    try {
+
+        const preid = req.params.id;
+
+        // SEARCH CORRECTIVE
+        const preventiveDB = await Preventive.findById({ _id: preid })
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
+        if (!preventiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun usuario con este ID'
+            });
+        }
+        // SEARCH CORRECTIVE
+
+        const pathPDf = path.join(__dirname, `../uploads/pdf/${preid}.pdf`);
+
+        // VALIDATE CERTIFICADO
+        if (fs.existsSync(pathPDf)) {
+            // DELET CERTIFICADO OLD
+            fs.unlinkSync(pathPDf);
+        }
+
+        const parrafo = '';
+
+        // Create a document
+        const doc = new PDFDocument({ size: 'A4' });
+
+        // Pipe its output somewhere, like to a file or HTTP response
+        // See below for browser usage
+        doc.pipe(fs.createWriteStream(pathPDf));
+
+        doc.image(path.join(__dirname, `../uploads/logo/liteco.png`), 210, 35, { width: 130, align: 'center', valign: 'center' });
+
+        // Embed a font, set the font size, and render some text
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(16)
+            .moveDown(2)
+            .text('LINEA TECNOLOGICA DEL ORIENTE SA', {
+                width: 412,
+                align: 'center',
+                ellipsis: true,
+            });
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text('NIT. 901.614.914-0', {
+                width: 412,
+                align: 'center',
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text('Carrera 10 No. 20-11 Lagos 1', {
+                width: 412,
+                align: 'center',
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text('Telefono: 3112125174', {
+                width: 412,
+                align: 'center',
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text('comercial@litecoriente.com', {
+                width: 412,
+                align: 'center',
+                ellipsis: true
+            });
+
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(14)
+            .moveDown(1)
+            .text(`Control #${preventiveDB.control}`, {
+                width: 412,
+                align: 'right',
+                ellipsis: true
+            });
+
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text(`Fecha: ${ new Date(preventiveDB.date).getDate()}/${ new Date(preventiveDB.date).getMonth()}/${ new Date(preventiveDB.date).getFullYear()}`, {
+                width: 412,
+                align: 'right',
+                ellipsis: true
+            });
+
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(14)
+            .text('Producto:', {
+                width: 412,
+                align: 'left',
+                height: 50,
+                ellipsis: true
+            });
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text(`Codigo: ${preventiveDB.product.code}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text(`Serial: ${preventiveDB.product.serial}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text(`Marca: ${preventiveDB.product.brand}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text(`Modelo: ${preventiveDB.product.model}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+        doc
+            .fontSize(12)
+            .text(`Ubicacion: ${preventiveDB.product.ubicacion || ''}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+
+        doc
+            .fontSize(12)
+            .text(`Solicitante: ${preventiveDB.solicitante || ''}`, {
+                width: 412,
+                align: 'left',
+                indent: 10,
+                height: 50,
+                ellipsis: true
+            });
+
+
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(14)
+            .moveDown()
+            .text('INFORME:', {
+                width: 412,
+                align: 'left',
+                height: 50,
+                ellipsis: true
+            });
+
+        for (const nota of preventiveDB.notes) {
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .text(`> ${nota.note}`, {
+                    width: 412,
+                    align: 'left',
+                    height: 50,
+                    ellipsis: true
+                });
+
+            doc
+                .fontSize(8)
+                .text(` Por: ${nota.staff.name} - ${ new Date(nota.date).getDate()}/${ new Date(nota.date).getMonth()}/${ new Date(nota.date).getFullYear()} ${ new Date(nota.date).getHours()}:${ new Date(nota.date).getMinutes()}`, {
+                    width: 412,
+                    align: 'left',
+                    indent: 10,
+                    height: 25,
+                    ellipsis: true
+                });
+        }
+
+        if (preventiveDB.red) {
+            doc
+                .fontSize(12)
+                .moveDown()
+                .text(`> Equipo en red`, {
+                    width: 412,
+                    align: 'left',
+                    height: 50,
+                    ellipsis: true
+                });
+        }
+
+        if (preventiveDB.operativa) {
+            doc
+                .fontSize(12)
+                .moveDown()
+                .text(`> Equipo en optimas condiciones y operativo`, {
+                    width: 412,
+                    align: 'left',
+                    height: 50,
+                    ellipsis: true
+                });
+        }
+
+
+
+        let altura = 700;
+
+        // FIRMAS
+        doc
+            .text(`Tecnico: ${preventiveDB.staff.name}`, 150, (altura), {
+                continued: true,
+            })
+            .text(``, {
+                continued: true,
+            })
+            .text(`Recibe: ${preventiveDB.recibe || ''}`, {
+                continued: true,
+                align: 'rigth',
+
+            });
+
+
+        doc.addPage({ size: 'A4' });
+
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text(``, {
+                continued: false,
+                width: 412,
+            });
+
+        if (preventiveDB.imgBef.length > 0) {
+
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .text(`Imagenes Antes del mantenimiento:`, {
+                    continued: false,
+                    width: 412,
+                    align: 'left',
+                    ellipsis: true
+                });
+
+            for (let i = 0; i < 2; i++) {
+                const pic = preventiveDB.imgBef[i];
+
+                const pathImg = path.join(__dirname, `../uploads/correctives/${pic.img}`);
+
+                if (fs.existsSync(pathImg)) {
+
+                    const img = await sharp(pathImg)
+                        .png()
+                        .toBuffer();
+
+                    await doc.image(img, { scale: 0.20, align: 'center' })
+                        .moveDown();
+                }
+
+
+            }
+        }
+
+
+
+        if (preventiveDB.imgAft.length > 0) {
+
+            doc
+                .font('Helvetica')
+                .fontSize(12)
+                .moveDown()
+                .text(`Imagenes Despues del mantenimiento:`, {
+                    width: 412,
+                    align: 'left',
+                    ellipsis: true
+                });
+
+            for (let i = 0; i < 2; i++) {
+                const pic = preventiveDB.imgAft[i];
+
+                const pathImg = path.join(__dirname, `../uploads/preventives/${pic.img}`);
+
+                if (fs.existsSync(pathImg)) {
+
+                    const img = await sharp(pathImg)
+                        .png()
+                        .toBuffer();
+
+                    await doc.image(img, { scale: 0.20, align: 'center' })
+                        .moveDown();
+                }
+
+            }
+        }
+
+
+
+        await doc.end();
+
+        setTimeout(() => {
+
+            if (fs.existsSync(pathPDf)) {
+                res.sendFile(pathPDf);
+            } else {
+                res.json({
+                    ok: false,
+                    msg: 'No se ha generado el PDF del preventivo!'
+                });
+            }
+
+        }, 2000);
+
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  DELETE PREVENTIVES
 =========================================================================*/
 
@@ -410,5 +761,6 @@ module.exports = {
     getPreventiveId,
     postNotes,
     getPreventiveStaff,
-    getPreventiveProduct
+    getPreventiveProduct,
+    pdfPreventive
 };

@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPreventives, createPreventive, updatePreventives, deletePreventives, getPreventiveId, postNotes, getPreventiveStaff, getPreventiveProduct } = require('../controllers/preventives.controller');
+const { getPreventives, createPreventive, updatePreventives, deletePreventives, getPreventiveId, postNotes, getPreventiveStaff, getPreventiveProduct, pdfPreventive } = require('../controllers/preventives.controller');
 
 
 const router = Router();
@@ -44,6 +44,14 @@ router.get('/staff/:staff', validarJWT, getPreventiveStaff);
 router.get('/product/:product', validarJWT, getPreventiveProduct);
 /** =====================================================================
  *  GET PREVENTIVE FOR PRODUCT
+=========================================================================*/
+
+/** =====================================================================
+ *  GET CORRECTIVE FOR PRODUCT
+=========================================================================*/
+router.get('/pdf/:id', pdfPreventive);
+/** =====================================================================
+ *  GET CORRECTIVE FOR PRODUCT
 =========================================================================*/
 
 /** =====================================================================
