@@ -655,7 +655,12 @@ const pdfCorrective = async(req, res = response) => {
                     ellipsis: true
                 });
 
-            for (let i = 0; i < 2; i++) {
+            let v = 2;
+            if (corretiveDB.imgBef.length < 2) {
+                v = corretiveDB.imgBef.length;
+            }
+
+            for (let i = 0; i < v; i++) {
                 const pic = corretiveDB.imgBef[i];
 
                 const pathImg = path.join(__dirname, `../uploads/correctives/${pic.img}`);
@@ -688,7 +693,12 @@ const pdfCorrective = async(req, res = response) => {
                     ellipsis: true
                 });
 
-            for (let i = 0; i < 2; i++) {
+            let v = 2;
+            if (corretiveDB.imgAft.length < 2) {
+                v = corretiveDB.imgAft.length;
+            }
+
+            for (let i = 0; i < v; i++) {
                 const pic = corretiveDB.imgAft[i];
 
                 const pathImg = path.join(__dirname, `../uploads/correctives/${pic.img}`);
