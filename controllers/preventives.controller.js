@@ -4,6 +4,8 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
+const sharp = require('sharp');
+
 const Preventive = require('../models/preventives.model');
 const Product = require('../models/products.model');
 
