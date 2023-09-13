@@ -451,7 +451,7 @@ const pdfCorrective = async(req, res = response) => {
             });
         doc
             .fontSize(12)
-            .text('Carrera 10 No. 20-11 Lagos 1', {
+            .text('Carrera 10 # 26 - 11 Lagos 1 Floridablanca', {
                 width: 412,
                 align: 'center',
                 ellipsis: true

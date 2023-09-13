@@ -21,7 +21,7 @@ const ImgSchema = Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
 
 });
@@ -32,7 +32,7 @@ const VideoSchema = Schema({
     },
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }
 
 });
@@ -45,7 +45,7 @@ const NotesSchema = Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
 
     staff: {
@@ -133,7 +133,7 @@ const CorrectivesSchema = Schema({
 
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     },
 
 });
