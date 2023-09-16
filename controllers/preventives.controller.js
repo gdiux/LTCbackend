@@ -499,7 +499,7 @@ const pdfPreventive = async(req, res = response) => {
         doc
             .font('Helvetica')
             .fontSize(12)
-            .text(`Fecha: ${ new Date(preventiveDB.date).getDate()}/${ new Date(preventiveDB.date).getMonth()}/${ new Date(preventiveDB.date).getFullYear()}`, {
+            .text(`Fecha: ${ new Date(preventiveDB.date).getDate()}/${ new Date(preventiveDB.date).getMonth()+1}/${ new Date(preventiveDB.date).getFullYear()}`, {
                 width: 412,
                 align: 'right',
                 ellipsis: true

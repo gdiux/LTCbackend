@@ -484,7 +484,7 @@ const pdfCorrective = async(req, res = response) => {
         doc
             .font('Helvetica')
             .fontSize(12)
-            .text(`Fecha: ${ new Date(corretiveDB.date).getDate()}/${ new Date(corretiveDB.date).getMonth()}/${ new Date(corretiveDB.date).getFullYear()}`, {
+            .text(`Fecha: ${ new Date(corretiveDB.date).getDate()}/${ new Date(corretiveDB.date).getMonth()+1}/${ new Date(corretiveDB.date).getFullYear()}`, {
                 width: 412,
                 align: 'right',
                 ellipsis: true
