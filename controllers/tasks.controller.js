@@ -16,7 +16,8 @@ const getTasks = async(req, res) => {
             .populate('staff', 'name role img')
             .populate('create', 'name role img')
             .limit(hasta)
-            .skip(desde),
+            .skip(desde)
+            .sort({fecha: -1}),
             Task.countDocuments({ end: query.end })
         ]);
 
