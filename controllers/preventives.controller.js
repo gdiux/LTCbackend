@@ -427,6 +427,9 @@ const pdfPreventive = async(req, res = response) => {
         }
         // SEARCH CORRECTIVE
 
+        // FIX DATE
+        preventiveDB.date = new Date(preventiveDB.date).getTime() - 14400000;
+
         const pathPDf = path.join(__dirname, `../uploads/pdf/${preid}.pdf`);
 
         // VALIDATE CERTIFICADO
@@ -495,7 +498,7 @@ const pdfPreventive = async(req, res = response) => {
                 align: 'right',
                 ellipsis: true
             });
-
+        
         doc
             .font('Helvetica')
             .fontSize(12)
@@ -585,7 +588,7 @@ const pdfPreventive = async(req, res = response) => {
 
         for (const nota of preventiveDB.notes) {
 
-            nota.date = new Date(nota.date).getTime() - 18000000;
+            nota.date = new Date(nota.date).getTime() - 14400000;
 
             doc
                 .font('Helvetica')

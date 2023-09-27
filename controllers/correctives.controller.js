@@ -412,6 +412,9 @@ const pdfCorrective = async(req, res = response) => {
         }
         // SEARCH CORRECTIVE
 
+        // FIX DATE
+        corretiveDB.date = new Date(corretiveDB.date).getTime() - 14400000;
+
         const pathPDf = path.join(__dirname, `../uploads/pdf/${coid}.pdf`);
 
         // VALIDATE CERTIFICADO
@@ -480,7 +483,7 @@ const pdfCorrective = async(req, res = response) => {
                 align: 'right',
                 ellipsis: true
             });
-
+        
         doc
             .font('Helvetica')
             .fontSize(12)
@@ -570,7 +573,7 @@ const pdfCorrective = async(req, res = response) => {
 
         for (const nota of corretiveDB.notes) {
 
-            nota.date = new Date(nota.date).getTime() - 18000000;
+            nota.date = new Date(nota.date).getTime() - 14400000;
 
             doc
                 .font('Helvetica')
