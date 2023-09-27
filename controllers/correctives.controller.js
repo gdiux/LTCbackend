@@ -569,6 +569,9 @@ const pdfCorrective = async(req, res = response) => {
             });
 
         for (const nota of corretiveDB.notes) {
+
+            nota.date = new Date(nota.date).getTime() - 18000000;
+
             doc
                 .font('Helvetica')
                 .fontSize(12)

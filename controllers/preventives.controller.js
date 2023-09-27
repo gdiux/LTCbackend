@@ -584,6 +584,9 @@ const pdfPreventive = async(req, res = response) => {
             });
 
         for (const nota of preventiveDB.notes) {
+
+            nota.date = new Date(nota.date).getTime() - 18000000;
+
             doc
                 .font('Helvetica')
                 .fontSize(12)
