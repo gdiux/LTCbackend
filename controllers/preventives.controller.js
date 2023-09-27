@@ -447,7 +447,7 @@ const pdfPreventive = async(req, res = response) => {
         // See below for browser usage
         doc.pipe(fs.createWriteStream(pathPDf));
 
-        doc.image(path.join(__dirname, `../uploads/logo/liteco.png`), 210, 35, { width: 130, align: 'center', valign: 'center' });
+        doc.image(path.join(__dirname, `../uploads/logo/castitoner.png`), 210, 35, { width: 130, align: 'center', valign: 'center' });
 
         // Embed a font, set the font size, and render some text
         doc
