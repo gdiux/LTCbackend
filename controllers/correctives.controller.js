@@ -24,6 +24,50 @@ const getRole = (role) => {
 }
 
 /** =====================================================================
+ *  GET CORRECTIVES QUERY
+=========================================================================*/
+const getCorrectivesQuery = async(req, res = response) => {
+
+    try {
+
+        const { desde, hasta, sort, ...query } = req.body;
+
+        const [correctives, total] = await Promise.all([
+
+            Corrective.find(query)
+            .populate('create', 'name')
+            .populate('staff', 'name')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img ubicacion')
+            .limit(hasta)
+            .skip(desde)
+            .sort(sort),
+
+            Corrective.countDocuments()
+        ]);
+
+        res.json({
+            ok: true,
+            correctives,
+            total
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente de nuevo'
+        });
+
+    }
+
+};
+/** =====================================================================
+ *  GET CORRECTIVES
+=========================================================================*/
+
+/** =====================================================================
  *  GET CORRECTIVES
 =========================================================================*/
 const getCorrectives = async(req, res = response) => {
@@ -441,7 +485,7 @@ const pdfCorrective = async(req, res = response) => {
             .fontSize(16)
             .moveDown(2)
             .text('LINEA TECNOLOGICA DEL ORIENTE SA', {
-            // .text('CASTITONER & SUMINISTROS', {
+                // .text('CASTITONER & SUMINISTROS', {
                 width: 412,
                 align: 'center',
                 ellipsis: true,
@@ -450,7 +494,7 @@ const pdfCorrective = async(req, res = response) => {
             .font('Helvetica')
             .fontSize(12)
             .text('NIT. 901.614.914-0', {
-            // .text('NIT. 88.264.373-5', {
+                // .text('NIT. 88.264.373-5', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -458,7 +502,7 @@ const pdfCorrective = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('Carrera 10 # 26 - 11 Lagos 1 Floridablanca', {
-            // .text('AV 0 11 72 LC 205 CC GRAN BULEVAR BRR CENTRO CUCUTA', {
+                // .text('AV 0 11 72 LC 205 CC GRAN BULEVAR BRR CENTRO CUCUTA', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -466,7 +510,7 @@ const pdfCorrective = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('Telefono: 3112125174', {
-            // .text('Telefono: 3103011828', {
+                // .text('Telefono: 3103011828', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -474,7 +518,7 @@ const pdfCorrective = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('comercial@litecoriente.com', {
-            // .text('castitoner@gmail.com', {
+                // .text('castitoner@gmail.com', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -489,7 +533,7 @@ const pdfCorrective = async(req, res = response) => {
                 align: 'right',
                 ellipsis: true
             });
-        
+
         doc
             .font('Helvetica')
             .fontSize(12)
@@ -767,5 +811,6 @@ module.exports = {
     getCorrectiveStaff,
     postNotesCorrectives,
     getCorrectiveProduct,
-    pdfCorrective
+    pdfCorrective,
+    getCorrectivesQuery
 };

@@ -92,6 +92,7 @@ const search = async(req, res = response) => {
 
                 [data, total] = await Promise.all([
                     Preventive.find({
+                        status: true,
                         $or: [
                             { control: busqueda }
                         ]
@@ -106,6 +107,7 @@ const search = async(req, res = response) => {
             } else {
                 [data, total] = await Promise.all([
                     Preventive.find({
+                        status: true,
                         $or: [
                             { estado: regex }
                         ]
