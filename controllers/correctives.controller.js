@@ -333,8 +333,58 @@ const postNotesCorrectives = async(req, res = response) => {
 }
 
 /** =====================================================================
- *  CREATE NOTES IN CORRECTIVE
+ *  DELETE NOTE
 =========================================================================*/
+const deleteNoteCorrective = async(req, res = response) => {
+
+    try {
+
+        const coid = req.params.coid;
+        const note = req.params.note;
+
+        // SEARCH CORRECTIVE
+        const correctiveDB = await Corrective.findById(coid);
+        if (!correctiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun Mantenimiento correctivo con este ID'
+            });
+        }
+        // SEARCH CORRECTIVE
+
+        const correctiveUpdate = await Corrective.updateOne({ _id: coid }, { $pull: { notes: { _id: note } } });
+
+        // VERIFICAR SI SE ACTUALIZO
+        if (correctiveUpdate.nModified === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No se pudo eliminar, porfavor intente de nuevo'
+            });
+        }
+
+        const corrective = await Corrective.findById(coid)
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img ubicacion');
+
+        res.json({
+            ok: true,
+            corrective
+        });
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
 
 /** =====================================================================
  *  UPDATE CORRECTIVES
@@ -609,6 +659,27 @@ const pdfCorrective = async(req, res = response) => {
                 ellipsis: true
             });
 
+        doc
+            .font('Helvetica-Bold')
+            .fontSize(14)
+            .moveDown()
+            .text('Descripción:', {
+                width: 412,
+                align: 'left',
+                height: 50,
+                ellipsis: true
+            });
+
+        doc
+            .font('Helvetica')
+            .fontSize(12)
+            .text(`${corretiveDB.description}`, {
+                width: 412,
+                align: 'left',
+                height: 50,
+                ellipsis: true
+            });
+
 
         doc
             .font('Helvetica-Bold')
@@ -812,5 +883,6 @@ module.exports = {
     postNotesCorrectives,
     getCorrectiveProduct,
     pdfCorrective,
-    getCorrectivesQuery
+    getCorrectivesQuery,
+    deleteNoteCorrective
 };

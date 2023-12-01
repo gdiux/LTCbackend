@@ -360,6 +360,60 @@ const updatePreventives = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  DELETE NOTE
+=========================================================================*/
+const deleteNotePreventive = async(req, res = response) => {
+
+    try {
+
+        const preid = req.params.preid;
+        const note = req.params.note;
+
+        // SEARCH CORRECTIVE
+        const preventiveDB = await Preventive.findById(preid);
+        if (!preventiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun Mantenimiento preventivo con este ID'
+            });
+        }
+        // SEARCH CORRECTIVE
+
+        const preventiveUpdate = await Preventive.updateOne({ _id: preid }, { $pull: { notes: { _id: note } } });
+
+        // VERIFICAR SI SE ACTUALIZO
+        if (preventiveUpdate.nModified === 0) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No se pudo eliminar, porfavor intente de nuevo'
+            });
+        }
+
+        const preventive = await Preventive.findById(preid)
+            .populate('create', 'name role img')
+            .populate('staff', 'name role img')
+            .populate('notes.staff', 'name role img')
+            .populate('client', 'name cedula phone email address city')
+            .populate('product', 'code serial brand model year status estado next img frecuencia ubicacion');
+
+        res.json({
+            ok: true,
+            preventive
+        });
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  DELETE PREVENTIVES
 =========================================================================*/
 const deletePreventives = async(req, res = response) => {
@@ -456,7 +510,7 @@ const pdfPreventive = async(req, res = response) => {
             .fontSize(16)
             .moveDown(2)
             .text('LINEA TECNOLOGICA DEL ORIENTE SA', {
-            // .text('CASTITONER & SUMINISTROS', {
+                // .text('CASTITONER & SUMINISTROS', {
                 width: 412,
                 align: 'center',
                 ellipsis: true,
@@ -465,7 +519,7 @@ const pdfPreventive = async(req, res = response) => {
             .font('Helvetica')
             .fontSize(12)
             .text('NIT. 901.614.914-0', {
-            // .text('NIT. 88.264.373-5', {
+                // .text('NIT. 88.264.373-5', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -473,7 +527,7 @@ const pdfPreventive = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('Carrera 10 # 26 - 11 Lagos 1 Floridablanca', {
-            // .text('AV 0 11 72 LC 205 CC GRAN BULEVAR BRR CENTRO CUCUTA', {
+                // .text('AV 0 11 72 LC 205 CC GRAN BULEVAR BRR CENTRO CUCUTA', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -481,7 +535,7 @@ const pdfPreventive = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('Telefono: 3112125174', {
-            // .text('Telefono: 3103011828', {
+                // .text('Telefono: 3103011828', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -489,7 +543,7 @@ const pdfPreventive = async(req, res = response) => {
         doc
             .fontSize(12)
             .text('comercial@litecoriente.com', {
-            // .text('castitoner@gmail.com', {
+                // .text('castitoner@gmail.com', {
                 width: 412,
                 align: 'center',
                 ellipsis: true
@@ -504,7 +558,7 @@ const pdfPreventive = async(req, res = response) => {
                 align: 'right',
                 ellipsis: true
             });
-        
+
         doc
             .font('Helvetica')
             .fontSize(12)
@@ -681,7 +735,7 @@ const pdfPreventive = async(req, res = response) => {
                     align: 'left',
                     ellipsis: true
                 });
-            
+
             let v = 2;
             if (preventiveDB.imgBef.length < 2) {
                 v = preventiveDB.imgBef.length;
@@ -786,5 +840,6 @@ module.exports = {
     postNotes,
     getPreventiveStaff,
     getPreventiveProduct,
-    pdfPreventive
+    pdfPreventive,
+    deleteNotePreventive
 };

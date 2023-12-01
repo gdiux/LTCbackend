@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getPreventives, createPreventive, updatePreventives, deletePreventives, getPreventiveId, postNotes, getPreventiveStaff, getPreventiveProduct, pdfPreventive } = require('../controllers/preventives.controller');
+const { getPreventives, createPreventive, updatePreventives, deletePreventives, getPreventiveId, postNotes, getPreventiveStaff, getPreventiveProduct, pdfPreventive, deleteNotePreventive } = require('../controllers/preventives.controller');
 
 
 const router = Router();
@@ -103,6 +103,14 @@ router.put('/:id', [
 router.delete('/:id', validarJWT, deletePreventives);
 /** =====================================================================
  *  DELETE PREVENTIVES
+=========================================================================*/
+
+/** =====================================================================
+ *  DELETE NOTES CORRECTIVES
+=========================================================================*/
+router.delete('/delete/note/:preid/:note', validarJWT, deleteNotePreventive);
+/** =====================================================================
+ *  DELETE NOTES CORRECTIVES
 =========================================================================*/
 
 // EXPORTS

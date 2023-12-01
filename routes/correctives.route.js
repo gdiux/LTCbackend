@@ -9,7 +9,7 @@ const { validarCampos } = require('../middlewares/validar-campos');
 const { validarJWT } = require('../middlewares/validar-jwt');
 
 // CONTROLLER
-const { getCorrectives, createCorrectives, updateCorrectives, deleteCorrectives, getCorrectiveId, getCorrectiveStaff, postNotesCorrectives, getCorrectiveProduct, pdfCorrective, getCorrectivesQuery } = require('../controllers/correctives.controller');
+const { getCorrectives, createCorrectives, updateCorrectives, deleteCorrectives, getCorrectiveId, getCorrectiveStaff, postNotesCorrectives, getCorrectiveProduct, pdfCorrective, getCorrectivesQuery, deleteNoteCorrective } = require('../controllers/correctives.controller');
 
 
 
@@ -110,6 +110,14 @@ router.put('/:id', [
 router.delete('/:id', validarJWT, deleteCorrectives);
 /** =====================================================================
  *  DELETE CORRECTIVES
+=========================================================================*/
+
+/** =====================================================================
+ *  DELETE NOTES CORRECTIVES
+=========================================================================*/
+router.delete('/delete/note/:coid/:note', validarJWT, deleteNoteCorrective);
+/** =====================================================================
+ *  DELETE NOTES CORRECTIVES
 =========================================================================*/
 
 // EXPORTS
