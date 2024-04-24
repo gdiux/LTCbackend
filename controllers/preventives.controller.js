@@ -797,8 +797,6 @@ const pdfPreventive = async(req, res = response) => {
             }
         }
 
-
-
         await doc.end();
 
         setTimeout(() => {
@@ -813,8 +811,6 @@ const pdfPreventive = async(req, res = response) => {
             }
 
         }, 2000);
-
-
 
     } catch (error) {
         console.log(error);

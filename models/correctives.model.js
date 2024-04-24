@@ -5,13 +5,15 @@ const autoIncrement = require('mongoose-auto-increment');
 autoIncrement.initialize(connection);
 
 const ItemsSchema = Schema({
-    product: {
-        type: Schema.Types.ObjectId,
-        ref: 'Product'
+    sku: {
+        type: String
     },
-    qty: {
+    quantity: {
         type: Number
-    }
+    },
+    description: {
+        type: String
+    },
 });
 
 const ImgSchema = Schema({

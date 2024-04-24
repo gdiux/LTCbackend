@@ -3,8 +3,10 @@ const { response } = require('express');
 const User = require('../models/users.model');
 const Client = require('../models/clients.model');
 const Product = require('../models/products.model');
+const Inventory = require('../models/inventory.model');
 const Preventive = require('../models/preventives.model');
 const Corrective = require('../models/correctives.model');
+const LogProduct = require('../models/log.products.model');
 
 /** =====================================================================
  *  SEARCH FOR TABLE
@@ -82,6 +84,43 @@ const search = async(req, res = response) => {
                 })
                 .populate('client', 'name phone cid'),
                 Product.countDocuments()
+            ]);
+            break;
+        case 'inventory':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                Inventory.find({
+                    $or: [
+                        { sku: regex },
+                        { name: regex },
+                        { type: regex },
+                        { description: regex },
+                    ]
+                })
+                .populate('client', 'name phone cid'),
+                Inventory.countDocuments()
+            ]);
+            break;
+
+        case 'movimientos':
+
+            // data = await Client.find({ name: regex });
+            [data, total] = await Promise.all([
+                LogProduct.find({
+                    $or: [
+                        { sku: regex },
+                        { name: regex },
+                        { description: regex },
+                        { type: regex },
+                        { categoria: regex },
+                        { subcategoria: regex }
+                    ]
+                })
+                .populate('cajero', 'name')
+                .skip(desde)
+                .limit(hasta),
+                LogProduct.countDocuments()
             ]);
             break;
 

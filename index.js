@@ -42,6 +42,11 @@ app.use('/api/users', require('./routes/users.route'));
 app.use('/api/tasks', require('./routes/tasks.route'));
 app.use('/api/uploads', require('./routes/uploads.route'));
 
+app.use('/api/inventory', require('./routes/inventory.route'));
+
+app.use('/api/logproducts', require('./routes/logproducts.route'));
+app.use('/api/invoices', require('./routes/invoice.route'));
+
 // SPA
 app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'public/index.html'));
