@@ -144,11 +144,16 @@ const search = async(req, res = response) => {
                 ]);
 
             } else {
+
+                let status = (busqueda === 'Eliminado' || busqueda === 'Eliminados' || busqueda === 'eliminados' || busqueda === 'eliminado') ? false : true;
+
+
                 [data, total] = await Promise.all([
                     Preventive.find({
-                        status: true,
                         $or: [
-                            { estado: regex }
+                            { estado: regex },
+                            { status }
+
                         ]
                     })
                     .populate('client', 'name cedula phone email address city')
@@ -180,10 +185,14 @@ const search = async(req, res = response) => {
                 ]);
 
             } else {
+
+                let status = (busqueda === 'Eliminado' || busqueda === 'Eliminados' || busqueda === 'eliminados' || busqueda === 'eliminado') ? false : true;
+
                 [data, total] = await Promise.all([
                     Corrective.find({
                         $or: [
-                            { estado: regex }
+                            { estado: regex },
+                            { status }
                         ]
                     })
                     .populate('client', 'name cedula phone email address city')

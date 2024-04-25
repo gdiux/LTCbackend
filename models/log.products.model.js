@@ -29,6 +29,14 @@ const LogProductSchema = Schema({
         type: Schema.Types.ObjectId,
         ref: 'Invoice'
     },
+    preventive: {
+        type: Schema.Types.ObjectId,
+        ref: 'Preventives'
+    },
+    corrective: {
+        type: Schema.Types.ObjectId,
+        ref: 'Correctives'
+    },
     cajero: {
         type: Schema.Types.ObjectId,
         ref: 'User'

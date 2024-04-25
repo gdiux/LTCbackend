@@ -8,6 +8,8 @@ const sharp = require('sharp');
 
 const Preventive = require('../models/preventives.model');
 const Product = require('../models/products.model');
+const Inventory = require('../models/inventory.model');
+const LogProduct = require('../models/log.products.model');
 
 /** =====================================================================
  *  GET ROLE
@@ -360,6 +362,75 @@ const updatePreventives = async(req, res = response) => {
 =========================================================================*/
 
 /** =====================================================================
+ *  ADD ITEMS PREVENTIVES
+=========================================================================*/
+const addItemsPreventive = async(req, res = response) => {
+
+    try {
+
+        const preid = req.params.id;
+        const uid = req.uid;
+
+        // SEARCH CLIENT
+        const preventiveDB = await Preventive.findById({ _id: preid });
+
+        if (!preventiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun Mantenimiento Preventivo con este ID'
+            });
+        }
+        // SEARCH CLIENT
+
+        const { qty, sku, type, description } = req.body;
+
+        const product = await Inventory.findOne({ sku });
+
+        product.inventory -= qty;
+        product.sold += qty;
+        product.save();
+
+        const data = {
+            sku: product.sku,
+            name: product.name,
+            description: `Preventivo #${preventiveDB.control}`,
+            type,
+            befored: product.inventory + qty,
+            qty: qty,
+            stock: product.inventory,
+            preventive: preventiveDB._id,
+            cajero: uid
+        }
+
+        const log = new LogProduct(data);
+        await log.save();
+
+
+        preventiveDB.items.push({
+            sku,
+            quantity: qty,
+            description,
+            logproduct: log._id
+        });
+
+        const preventiveUpdate = await Preventive.findByIdAndUpdate(preid, { items: preventiveDB.items }, { new: true, useFindAndModify: false })
+
+        res.json({
+            ok: true,
+            preventive: preventiveUpdate
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
+
+/** =====================================================================
  *  DELETE NOTE
 =========================================================================*/
 const deleteNotePreventive = async(req, res = response) => {
@@ -412,6 +483,8 @@ const deleteNotePreventive = async(req, res = response) => {
     }
 
 };
+
+
 
 /** =====================================================================
  *  DELETE PREVENTIVES
@@ -837,5 +910,6 @@ module.exports = {
     getPreventiveStaff,
     getPreventiveProduct,
     pdfPreventive,
-    deleteNotePreventive
+    deleteNotePreventive,
+    addItemsPreventive
 };

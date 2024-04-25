@@ -8,6 +8,9 @@ const sharp = require('sharp');
 
 const Corrective = require('../models/correctives.model');
 
+const Inventory = require('../models/inventory.model');
+const LogProduct = require('../models/log.products.model');
+
 /** =====================================================================
  *  GET ROLE
 =========================================================================*/
@@ -434,6 +437,75 @@ const updateCorrectives = async(req, res = response) => {
 /** =====================================================================
  *  UPDATE CORRECTIVES
 =========================================================================*/
+
+/** =====================================================================
+ *  ADD ITEMS CORRECTIVE
+=========================================================================*/
+const addItemsCorrective = async(req, res = response) => {
+
+    try {
+
+        const coid = req.params.id;
+        const uid = req.uid;
+
+        // SEARCH CLIENT
+        const correctiveDB = await Corrective.findById({ _id: coid });
+
+        if (!correctiveDB) {
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe ningun Mantenimiento Correctio con este ID'
+            });
+        }
+        // SEARCH CLIENT
+
+        const { qty, sku, type, description } = req.body;
+
+        const product = await Inventory.findOne({ sku });
+
+        product.inventory -= qty;
+        product.sold += qty;
+        product.save();
+
+        const data = {
+            sku: product.sku,
+            name: product.name,
+            description: `Correctivo #${correctiveDB.control}`,
+            type,
+            befored: product.inventory + qty,
+            qty: qty,
+            stock: product.inventory,
+            corrective: coid,
+            cajero: uid
+        }
+
+        const log = new LogProduct(data);
+        await log.save();
+
+
+        correctiveDB.items.push({
+            sku,
+            quantity: qty,
+            description,
+            logproduct: log._id
+        });
+
+        const correctiveUpdate = await Corrective.findByIdAndUpdate(coid, { items: correctiveDB.items }, { new: true, useFindAndModify: false })
+
+        res.json({
+            ok: true,
+            corrective: correctiveUpdate
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            ok: false,
+            msg: 'Error inesperado, porfavor intente nuevamente'
+        });
+    }
+
+};
 
 /** =====================================================================
  *  DELETE CORRECTIVES
@@ -884,5 +956,6 @@ module.exports = {
     getCorrectiveProduct,
     pdfCorrective,
     getCorrectivesQuery,
-    deleteNoteCorrective
+    deleteNoteCorrective,
+    addItemsCorrective
 };

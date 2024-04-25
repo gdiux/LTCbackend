@@ -1,4 +1,4 @@
-const Product = require('../models/inventory.model');
+const Inventory = require('../models/inventory.model');
 const LogProduct = require('../models/log.products.model');
 
 /** =====================================================================
@@ -12,7 +12,7 @@ const soldProduct = async(invoice) => {
 
         for (const item of products) {
 
-            const product = await Product.findOne({ sku: item.sku });
+            const product = await Inventory.findOne({ sku: item.sku });
 
             product.inventory -= item.quantity;
             product.sold += item.quantity;

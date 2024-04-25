@@ -14,6 +14,14 @@ const ItemsSchema = Schema({
     description: {
         type: String
     },
+    logproduct: {
+        type: Schema.Types.ObjectId,
+        ref: 'LogProducts'
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    }
 });
 
 const ImgSchema = Schema({
